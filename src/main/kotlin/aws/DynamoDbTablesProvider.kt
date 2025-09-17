@@ -27,6 +27,8 @@ class DynamoDbTablesProvider(
                 val tableDesc = try {
                     client.describeTable(tableName).table
                 } catch (_: Throwable) { continue; };
+                
+                // Use the v1 version of hasValidConfig since we're working with v1 TableDescription
                 if (hasValidConfig(tableDesc, tableName)) {
                     consumableTables.add(tableName);
                 }

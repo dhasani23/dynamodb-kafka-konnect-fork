@@ -1,0 +1,32 @@
+> Task :clean
+> Task :processResources NO-SOURCE
+> Task :processTestResources NO-SOURCE
+
+> Task :compileKotlin
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/aws/TablesProviderBase.kt:9:63 Parameter 'tableName' is never used
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/aws/TablesProviderBase.kt:20:65 Parameter 'tableName' is never used
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/kcl/KclRecordProcessor.kt:55:13 Variable 'firstProcessedSeqNum' is never used
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/kcl/KclRecordProcessor.kt:56:13 Variable 'lastProcessedSeqNum' is never used
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/kcl/KclWorkerImpl.kt:67:21 This cast can never succeed
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/kcl/KclWorkerImpl.kt:84:16 'constructor KinesisClientLibConfiguration(String!, String!, AWSCredentialsProvider!, String!)' is deprecated. Deprecated in Java
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/kcl/KclWorkerImpl.kt:107:29 Variable 'workerStopped' initializer is redundant
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/kcl/KclWorkerImpl.kt:126:21 This cast can never succeed
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/utilities/AvroSchemaNameParser.kt:77:83 Parameter 'conflictsWith' is never used, could be renamed to _
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/utilities/AvroSchemaNameParser.kt:175:23 Parameter 'c' is never used, could be renamed to _
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/utilities/AvroSchemaNameParser.kt:184:23 Parameter 'c' is never used, could be renamed to _
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/utilities/AvroSchemaNameParser.kt:226:50 Parameter 'c' is never used, could be renamed to _
+w: file:///local/home/davhasan/workplace/dynamodb-kafka-konnect-fork/src/main/kotlin/utilities/RecordConverter.kt:68:13 Condition 'keySchema == null' is always 'false'
+
+> Task :compileJava NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar
+> Task :assemble
+> Task :compileTestKotlin NO-SOURCE
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+
+BUILD SUCCESSFUL in 2s
+3 actionable tasks: 3 executed
