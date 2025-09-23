@@ -1,18 +1,18 @@
 package kcl
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams
-import com.amazonaws.services.dynamodbv2.model.BillingMode
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient
+import software.amazon.awssdk.services.dynamodb.model.BillingMode
 
 interface KclWorker {
     fun start(
-        dynamoDbClient: AmazonDynamoDB,
-        dynamoDbStreamsClient: AmazonDynamoDBStreams,
+        dynamoDbClient: DynamoDbClient,
+        dynamoDbStreamsClient: DynamoDbStreamsClient,
         tableName: String,
         taskId: String,
         endpoint: String,
         kclTableBillingMode: BillingMode
-    ): Void;
+    ): Void
 
-    fun stop(): Void;
+    fun stop(): Void
 }

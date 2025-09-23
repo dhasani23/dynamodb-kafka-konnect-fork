@@ -2,9 +2,9 @@ package utilities
 
 import Envelope
 import SourceInfo
-import com.amazonaws.services.dynamodbv2.model.AttributeValue
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement
-import com.amazonaws.services.dynamodbv2.model.TableDescription
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement
+import software.amazon.awssdk.services.dynamodb.model.TableDescription
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.kafka.connect.data.Schema
 import org.apache.kafka.connect.data.SchemaBuilder
@@ -19,22 +19,20 @@ class RecordConverter(
     private val tableDesc: TableDescription,
     private val topicNamePrefix: String,
 ) {
+    private val topicName: String
+    private val valueSchema: Schema
+    private lateinit var keySchema: Schema
 
-
-    private val topicName: String;
-    private val valueSchema: Schema;
-    private lateinit var keySchema: Schema;
-
-    private lateinit var keys: List<String>;
+    private lateinit var keys: List<String>
 
     companion object {
-        val objectMapper = ObjectMapper();
-        val ShardId = "src_shard_id";
-        val ShardSequenceNum = "src_shard_sequence_num";
+        val objectMapper = ObjectMapper()
+        val ShardId = "src_shard_id"
+        val ShardSequenceNum = "src_shard_sequence_num"
     }
 
     init {
-        topicName = topicNamePrefix + tableDesc.tableName;
+        topicName = topicNamePrefix + tableDesc.tableName()
         valueSchema = SchemaBuilder.struct()
             .name(AvroSchemaNameParser.DEFAULT.adjust("io.jhegarty14.connector.dynamodb.envelope"))
             .field(Envelope.FieldName.Version, Schema.STRING_SCHEMA)
@@ -42,7 +40,7 @@ class RecordConverter(
 //            .field(Envelope.FieldName.Source, SourceInfo)
             .field(Envelope.FieldName.Operation, Schema.STRING_SCHEMA)
             .field(Envelope.FieldName.Timestamp, Schema.INT64_SCHEMA)
-            .build();
+            .build()
     }
 
     fun toSourceRecord(
@@ -55,32 +53,34 @@ class RecordConverter(
     ): SourceRecord {
         val sanitizedAttributes = attributes.entries.stream()
             .collect(
-                Collectors.toMap(
+                Collectors.toMap<Map.Entry<String, AttributeValue>, String, AttributeValue, LinkedHashMap<String, AttributeValue>>(
                     { e -> this.sanitizeAttributeName(e.key) },
-                    Map.Entry<String, AttributeValue>::value,
+                    { e -> e.value },
                     { u, _ -> u },
-                    { LinkedHashMap() }));
+                    { LinkedHashMap() }))
 
-        val offsets = SourceInfo.toOffset(sourceInfo);
-        offsets.put(ShardId, shardId);
-        offsets.put(ShardSequenceNum, sequenceNumber);
+        val offsets = SourceInfo.toOffset(sourceInfo)
+        offsets.put(ShardId, shardId)
+        offsets.put(ShardSequenceNum, sequenceNumber)
 
-        if (keySchema == null) {
-            keys = tableDesc.keySchema.stream().map { v -> sanitizeAttributeName(v) }.collect(Collectors.toList());
-            keySchema = getKeySchema(keys);
+        if (this::keySchema.isInitialized.not()) {
+            keys = tableDesc.keySchema().stream()
+                .map { v -> sanitizeAttributeName(v) }
+                .collect(Collectors.toList())
+            keySchema = getKeySchema(keys)
         }
 
-        val keyData = Struct(getKeySchema(keys));
+        val keyData = Struct(getKeySchema(keys))
         for (key in keys) {
-            val attributeValue = sanitizedAttributes.get(key);
-            if (attributeValue?.s != null) {
-                keyData.put(key, attributeValue.s);
-                continue;
-            } else if (attributeValue?.n != null) {
-                keyData.put(key, attributeValue.n);
-                continue;
+            val attributeValue = sanitizedAttributes[key]
+            if (attributeValue?.s() != null) {
+                keyData.put(key, attributeValue.s())
+                continue
+            } else if (attributeValue?.n() != null) {
+                keyData.put(key, attributeValue.n())
+                continue
             }
-            throw Exception("Unsupported key AttributeValue");
+            throw Exception("Unsupported key AttributeValue")
         }
 
         val valueData = Struct(valueSchema)
@@ -88,7 +88,7 @@ class RecordConverter(
             .put(Envelope.FieldName.Document, objectMapper.writeValueAsString(sanitizedAttributes))
             .put(Envelope.FieldName.Source, SourceInfo.toStruct(sourceInfo))
             .put(Envelope.FieldName.Operation, op.code)
-            .put(Envelope.FieldName.Timestamp, arrivalTimestamp.toEpochMilli());
+            .put(Envelope.FieldName.Timestamp, arrivalTimestamp.toEpochMilli())
 
         return SourceRecord(
             Collections.singletonMap("table_name", sourceInfo.tableName),
@@ -102,28 +102,28 @@ class RecordConverter(
     }
 
     fun getKeySchema(keys: List<String>): Schema {
-        val keySchemaBuilder = SchemaBuilder.struct().name(AvroSchemaNameParser.DEFAULT.adjust(topicName + ".Key"));
+        val keySchemaBuilder = SchemaBuilder.struct().name(AvroSchemaNameParser.DEFAULT.adjust(topicName + ".Key"))
 
         for (key in keys) {
-            keySchemaBuilder.field(key, Schema.STRING_SCHEMA);
+            keySchemaBuilder.field(key, Schema.STRING_SCHEMA)
         }
 
-        return keySchemaBuilder.build();
+        return keySchemaBuilder.build()
     }
 
     private fun sanitizeAttributeName(element: KeySchemaElement): String {
-        return sanitizeAttributeName(element.attributeName);
+        return sanitizeAttributeName(element.attributeName())
     }
 
     private fun sanitizeAttributeName(attributeName: String): String {
-        val sanitizedAttributeName = attributeName.replace("^[^a-zA-Z_]|(?<!^)[^a-zA-Z0-9_]", "");
+        val sanitizedAttributeName = attributeName.replace(Regex("^[^a-zA-Z_]|(?<!^)[^a-zA-Z0-9_]"), "")
 
-        if (sanitizedAttributeName.isNullOrEmpty()) {
+        if (sanitizedAttributeName.isEmpty()) {
             throw IllegalStateException(
                 "The field name ${attributeName} couldn't be sanitized"
-            );
+            )
         }
 
-        return sanitizedAttributeName;
+        return sanitizedAttributeName
     }
 }

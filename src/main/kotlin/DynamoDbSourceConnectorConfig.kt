@@ -1,4 +1,4 @@
-import com.amazonaws.services.dynamodbv2.model.BillingMode
+import software.amazon.awssdk.services.dynamodb.model.BillingMode
 import org.apache.kafka.common.config.AbstractConfig
 import org.apache.kafka.common.config.ConfigDef
 import org.apache.kafka.common.config.types.Password
@@ -273,6 +273,6 @@ open class DynamoDbSourceConnectorConfig(
     }
 
     fun getKCLTableBillingMode(): BillingMode {
-        return BillingMode.fromValue(getString(SRC_KCL_TABLE_BILLING_MODE_CONFIG))
+        return BillingMode.valueOf(getString(SRC_KCL_TABLE_BILLING_MODE_CONFIG))
     }
 }

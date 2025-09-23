@@ -2,17 +2,17 @@ package kcl
 
 class ShardInfo(private val shardId: String) {
     @Volatile
-    private var lastCommittedRecordSeqNum = "";
+    private var lastCommittedRecordSeqNum = ""
 
     fun getShardId(): String {
-        return shardId;
+        return shardId
     }
 
     fun getLastCommittedRecordSeqNum(): String {
-        return lastCommittedRecordSeqNum;
+        return lastCommittedRecordSeqNum
     }
 
     fun setLastCommittedRecordSeqNum(seqNum: String) {
-        this.lastCommittedRecordSeqNum = seqNum;
+        this.lastCommittedRecordSeqNum = seqNum
     }
 }

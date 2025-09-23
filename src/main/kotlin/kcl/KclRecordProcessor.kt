@@ -1,15 +1,12 @@
 package kcl
 
 import Constants
-import com.amazonaws.services.kinesis.clientlibrary.exceptions.InvalidStateException
-import com.amazonaws.services.kinesis.clientlibrary.exceptions.ShutdownException
-import com.amazonaws.services.kinesis.clientlibrary.interfaces.IRecordProcessorCheckpointer
-import com.amazonaws.services.kinesis.clientlibrary.interfaces.v2.IRecordProcessor
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.ShutdownReason
-import com.amazonaws.services.kinesis.clientlibrary.types.InitializationInput
-import com.amazonaws.services.kinesis.clientlibrary.types.ProcessRecordsInput
-import com.amazonaws.services.kinesis.clientlibrary.types.ShutdownInput
-import java.time.Clock;
+import software.amazon.kinesis.exceptions.InvalidStateException
+import software.amazon.kinesis.exceptions.ShutdownException
+import software.amazon.kinesis.lifecycle.events.*
+import software.amazon.kinesis.processor.RecordProcessorCheckpointer
+import software.amazon.kinesis.processor.ShardRecordProcessor
+import java.time.Clock
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -19,32 +16,34 @@ class KclRecordProcessor(
     private val eventsQueue: ArrayBlockingQueue<KclRecordsWrapper>,
     private val shardRegister: ConcurrentHashMap<String, ShardInfo>,
     private val clock: Clock,
-) : IRecordProcessor {
+) : ShardRecordProcessor {
 
-    private var shutdownRequested = false;
-    private lateinit var shardId: String;
-    private var lastCheckpointTime = 0L;
-    private lateinit var lastProcessedSeqNum: String;
+    private var shutdownRequested = false
+    private lateinit var shardId: String
+    private var lastCheckpointTime = 0L
+    private lateinit var lastProcessedSeqNum: String
 
     override fun initialize(initializationInput: InitializationInput) {
-        shardId = initializationInput.shardId;
-        lastCheckpointTime = clock.millis();
-        lastProcessedSeqNum = "";
+        shardId = initializationInput.shardId()
+        lastCheckpointTime = clock.millis()
+        lastProcessedSeqNum = ""
 
-        shardRegister.putIfAbsent(shardId, ShardInfo(initializationInput.shardId));
+        shardRegister.putIfAbsent(shardId, ShardInfo(initializationInput.shardId()))
     }
 
-    override fun processRecords(processRecordsInput: ProcessRecordsInput?) {
-        val records = processRecordsInput?.records ?: return;
+    override fun processRecords(processRecordsInput: ProcessRecordsInput) {
+        val records = processRecordsInput.records() ?: return
 
-        val events = KclRecordsWrapper(shardId, records);
-        var added = false;
+        if (records.isEmpty()) return
+
+        val events = KclRecordsWrapper(shardId, records)
+        var added = false
         while (!added && !shutdownRequested) {
             added = try {
                 eventsQueue.offer(events, 100, TimeUnit.MILLISECONDS)
             } catch (e: InterruptedException) {
-                Thread.currentThread().interrupt();
-                return;
+                Thread.currentThread().interrupt()
+                return
             }
         }
 
@@ -52,87 +51,87 @@ class KclRecordProcessor(
             // TODO: log
         }
 
-        val firstProcessedSeqNum = records.get(0).sequenceNumber;
-        val lastProcessedSeqNum = records.get(records.size - 1).sequenceNumber;
-        // TODO: log first and last
+        if (records.isNotEmpty()) {
+            val firstProcessedSeqNum = records[0].sequenceNumber()
+            val lastProcessedSeqNum = records[records.size - 1].sequenceNumber()
+            // TODO: log first and last
+        }
+
+        // Try to checkpoint if it's time
+        if (isTimeToCheckpoint()) {
+            checkpoint(processRecordsInput.checkpointer())
+        }
     }
 
-    fun checkpoint(checkpointer: IRecordProcessorCheckpointer) {
+    fun checkpoint(checkpointer: RecordProcessorCheckpointer) {
         if (isTimeToCheckpoint()) {
-            val lastCommittedRecordSeqNum = shardRegister.get(shardId)?.getLastCommittedRecordSeqNum() ?: return;
+            val lastCommittedRecordSeqNum = shardRegister[shardId]?.getLastCommittedRecordSeqNum() ?: return
 
             try {
-                checkpointer.checkpoint(lastCommittedRecordSeqNum);
-                lastCheckpointTime = clock.millis();
+                checkpointer.checkpoint(lastCommittedRecordSeqNum)
+                lastCheckpointTime = clock.millis()
             } catch (e: IllegalArgumentException) {
-                throw RuntimeException("Invalid sequence number", e);
+                throw RuntimeException("Invalid sequence number", e)
             } catch (e: InvalidStateException) {
-                throw RuntimeException("Invalid kcl state", e);
+                throw RuntimeException("Invalid kcl state", e)
             } catch (e: ShutdownException) {
-                throw RuntimeException("Failed to checkpoint", e);
+                throw RuntimeException("Failed to checkpoint", e)
             }
         }
     }
 
     private fun isTimeToCheckpoint(): Boolean {
-        val passedTime = clock.millis() - lastCheckpointTime ;
-        return TimeUnit.MILLISECONDS.toSeconds(passedTime) >= Constants.KclRecordProcessorCheckpointingInterval;
+        val passedTime = clock.millis() - lastCheckpointTime
+        return TimeUnit.MILLISECONDS.toSeconds(passedTime) >= Constants.KclRecordProcessorCheckpointingInterval
     }
 
-    override fun shutdown(shutdownInput: ShutdownInput?) {
-        shutdownRequested = true;
-
-        try {
-            when (shutdownInput?.shutdownReason) {
-                ShutdownReason.TERMINATE -> onTerminate(shutdownInput);
-                ShutdownReason.ZOMBIE -> onZombie();
-                else -> return;
-            }
-        }  catch (e: InterruptedException) {
-            throw RuntimeException("Thread interrupted during shutdown", e);
-        } catch (e: InvalidStateException) {
-            throw RuntimeException("Invalid kcl state", e);
-        } catch (e: ShutdownException) {
-            throw RuntimeException("Failed to checkpoint", e);
-        }
+    override fun leaseLost(leaseLostInput: LeaseLostInput) {
+        // This is called when the lease is lost to another worker
+        shutdownRequested = true
+        shardRegister.remove(shardId)
     }
 
-    private fun onTerminate(shutdownInput: ShutdownInput) {
+    override fun shardEnded(shardEndedInput: ShardEndedInput) {
+        // This is called when the shard is closed and we need to checkpoint to complete processing
+        shutdownRequested = true
+
         if (lastProcessedSeqNum.isNotEmpty()) {
-            val processRegister = shardRegister.get(shardId) ?: return;
-            var i = 0;
-            while (!processRegister.getLastCommittedRecordSeqNum().equals(lastProcessedSeqNum)) {
+            val processRegister = shardRegister[shardId] ?: return
+            var i = 0
+            while (processRegister.getLastCommittedRecordSeqNum() != lastProcessedSeqNum) {
                 if (i % 20 == 0) {
                     // TODO log shared ended
                 }
-                i += 1;
+                i += 1
 
-                Thread.sleep(500);
+                Thread.sleep(500)
             }
         }
 
-        shardRegister.remove(shardId);
+        shardRegister.remove(shardId)
 
-        shutdownInput.checkpointer?.checkpoint();
+        try {
+            shardEndedInput.checkpointer().checkpoint()
+        } catch (e: Exception) {
+            // Log the exception
+            throw RuntimeException("Failed to checkpoint at shard end", e)
+        }
     }
 
-    private fun onZombie() {
-        shardRegister.remove(shardId);
-    }
+    override fun shutdownRequested(shutdownRequestedInput: ShutdownRequestedInput) {
+        // This is called when the worker is being shut down
+        shutdownRequested = true
 
-    fun shutdownRequested(checkpointer: IRecordProcessorCheckpointer) {
-        shutdownRequested = true;
-
-        val shardInfo = shardRegister.get(shardId) ?: return;
-        if (!shardInfo.getLastCommittedRecordSeqNum().equals("")) {
+        val shardInfo = shardRegister[shardId] ?: return
+        if (shardInfo.getLastCommittedRecordSeqNum() != "") {
             // TODO log graceful shutdown requested
         }
 
         try {
-            checkpointer.checkpoint(shardInfo.getLastCommittedRecordSeqNum());
+            shutdownRequestedInput.checkpointer().checkpoint(shardInfo.getLastCommittedRecordSeqNum())
         } catch (e: Throwable) {
             // log failed to checkpoint at shutdown exception
         }
-        shardRegister.remove(shardId);
+        shardRegister.remove(shardId)
     }
 }

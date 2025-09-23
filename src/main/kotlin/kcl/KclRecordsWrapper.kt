@@ -1,13 +1,13 @@
 package kcl
 
-import com.amazonaws.services.kinesis.model.Record
+import software.amazon.kinesis.retrieval.KinesisClientRecord
 
-class KclRecordsWrapper(private val shardId: String, private val records: List<Record>) {
+class KclRecordsWrapper(private val shardId: String, private val records: List<KinesisClientRecord>) {
     fun getShardId(): String {
-        return shardId;
+        return shardId
     }
 
-    fun getRecords(): List<Record> {
-        return records;
+    fun getRecords(): List<KinesisClientRecord> {
+        return records
     }
 }

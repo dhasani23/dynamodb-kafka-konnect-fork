@@ -1,8 +1,8 @@
 package aws
 
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse
 
 interface TableScanner {
-    fun getItems(exclusiveStartKey: Map<String, AttributeValue>): ScanResult;
+    fun getItems(exclusiveStartKey: Map<String, AttributeValue>): ScanResponse
 }

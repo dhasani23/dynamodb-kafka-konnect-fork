@@ -1,128 +1,162 @@
 package kcl
 
 import Constants
-import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams
-import com.amazonaws.services.dynamodbv2.model.BillingMode
-import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest
-import com.amazonaws.services.dynamodbv2.streamsadapter.AmazonDynamoDBStreamsAdapterClient
-import com.amazonaws.services.dynamodbv2.streamsadapter.StreamsWorkerFactory
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionInStream
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.KinesisClientLibConfiguration
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.Worker
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.BillingMode
+import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient
+import software.amazon.kinesis.common.ConfigsBuilder
+import software.amazon.kinesis.common.InitialPositionInStreamExtended
+import software.amazon.kinesis.coordinator.Scheduler
+import software.amazon.kinesis.exceptions.KinesisClientLibNonRetryableException
+import software.amazon.kinesis.metrics.MetricsLevel
+import software.amazon.kinesis.processor.ShardRecordProcessorFactory
+import software.amazon.kinesis.retrieval.polling.PollingConfig
+import java.net.URI
+import java.time.Instant
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 class KclWorkerImpl(
-    private val awsCredentialsProvider: AWSCredentialsProvider,
+    private val awsCredentialsProvider: AwsCredentialsProvider,
     private val eventsQueue: ArrayBlockingQueue<KclRecordsWrapper>,
     private val recordProcessorsRegister: ConcurrentHashMap<String, ShardInfo>,
 ) : KclWorker {
 
-    private lateinit var thread: Thread;
-    private lateinit var worker: Worker;
+    private lateinit var thread: Thread
+    private lateinit var scheduler: Scheduler
+    private lateinit var schedulerFuture: Future<*>
 
     override fun start(
-        dynamoDbClient: AmazonDynamoDB,
-        dynamoDbStreamsClient: AmazonDynamoDBStreams,
+        dynamoDbClient: DynamoDbClient,
+        dynamoDbStreamsClient: DynamoDbStreamsClient,
         tableName: String,
         taskId: String,
         endpoint: String,
         kclTableBillingMode: BillingMode,
-        ): Void {
+    ): Void {
         val recordProcessorFactory = KclRecordProcessorFactory(
             tableName,
             eventsQueue,
             recordProcessorsRegister
-        );
-
-        val clientLibConfig = getClientLibConfig(
-            tableName,
-            taskId,
-            dynamoDbClient,
-            endpoint,
-            kclTableBillingMode
-        );
-
-        val adapterClient = AmazonDynamoDBStreamsAdapterClient(dynamoDbStreamsClient);
-        adapterClient.setGenerateRecordBytes(false);
-
-        val cloudwatchClient = NoopKclCloudwatch();
-
-        worker = StreamsWorkerFactory
-            .createDynamoDbStreamsWorker(
-                recordProcessorFactory,
-                clientLibConfig,
-                adapterClient,
-                dynamoDbClient,
-                cloudwatchClient
-            );
-
-        thread = Thread(worker);
-        thread.isDaemon = true;
-        thread.start();
-
-        return Unit as Void;
-    }
-
-    fun getClientLibConfig(
-        tableName: String,
-        taskId: String,
-        dynamoDbClient: AmazonDynamoDB,
-        endpoint: String,
-        kclTableBillingMode: BillingMode
-    ): KinesisClientLibConfiguration {
-        val streamArn = dynamoDbClient.describeTable(
-            DescribeTableRequest()
-                .withTableName(tableName)
-        ).table.latestStreamArn;
-
-        val appName = Constants.KclWorkerApplicationNamePrefix + tableName;
-
-        return KinesisClientLibConfiguration(
-            appName,
-            streamArn,
-            awsCredentialsProvider,
-            appName + Constants.KclWorkerNamePrefix + taskId,
         )
-            .withCallProcessRecordsEvenForEmptyRecordList(true)
-            .withInitialPositionInStream(InitialPositionInStream.TRIM_HORIZON)
-            .withMaxRecords(Constants.StreamsRecordsLimit)
-            .withIdleTimeBetweenReadsInMillis(Constants.IdleTimeBetweenReads.toLong())
-            .withParentShardPollIntervalMillis(Constants.DefaultParentShardPollIntervalMillis)
-            .withFailoverTimeMillis(Constants.KclFailoverTime.toLong())
-            .withLogWarningForTaskAfterMillis(60 * 1000)
-            .withIgnoreUnexpectedChildShards(true)
-            .withDynamoDBEndpoint(endpoint)
-            .withBillingMode(kclTableBillingMode)
+
+        val streamArn = dynamoDbClient.describeTable { it.tableName(tableName) }.table().latestStreamArn()
+        val appName = Constants.KclWorkerApplicationNamePrefix + tableName
+        val workerId = appName + Constants.KclWorkerNamePrefix + taskId
+
+        // Configure the KCL v2 scheduler
+        scheduler = configureScheduler(
+            recordProcessorFactory,
+            streamArn,
+            appName,
+            workerId,
+            dynamoDbClient,
+            dynamoDbStreamsClient,
+            endpoint
+        )
+
+        // Start the scheduler in a separate thread
+        thread = Thread { 
+            try {
+                schedulerFuture = scheduler.run()
+            } catch (e: KinesisClientLibNonRetryableException) {
+                // Handle exceptions
+                e.printStackTrace()
+            }
+        }
+        thread.isDaemon = true
+        thread.start()
+
+        return Unit as Void
     }
 
-    fun getWorker(): Worker {
-        return worker;
+    private fun configureScheduler(
+        recordProcessorFactory: ShardRecordProcessorFactory,
+        streamArn: String,
+        appName: String,
+        workerId: String,
+        dynamoDbClient: DynamoDbClient,
+        dynamoDbStreamsClient: DynamoDbStreamsClient,
+        endpoint: String
+    ): Scheduler {
+        val configsBuilder = ConfigsBuilder(
+            streamArn,
+            appName,
+            dynamoDbStreamsClient,
+            dynamoDbClient,
+            workerId,
+            recordProcessorFactory
+        )
+
+        val retrievalConfig = configsBuilder.retrievalConfig()
+            .retrievalSpecificConfig(
+                PollingConfig(streamArn, dynamoDbStreamsClient)
+                    .maxRecords(Constants.StreamsRecordsLimit)
+            )
+            .initialPositionInStreamExtended(
+                InitialPositionInStreamExtended.newInitialPosition(
+                    software.amazon.kinesis.common.InitialPositionInStream.TRIM_HORIZON
+                )
+            )
+
+        val processorConfig = configsBuilder.processingConfig()
+            .callProcessRecordsEvenForEmptyRecordList(true)
+            .maxRecords(Constants.StreamsRecordsLimit)
+
+        val leaseManagementConfig = configsBuilder.leaseManagementConfig()
+            .failoverTimeMillis(Constants.KclFailoverTime.toLong())
+            .parentShardPollIntervalMillis(Constants.DefaultParentShardPollIntervalMillis)
+            .ignoreUnexpectedChildShards(true)
+            
+        // If endpoint is not empty, override the endpoint
+        if (endpoint.isNotEmpty()) {
+            leaseManagementConfig.dynamoDbClient(
+                DynamoDbClient.builder()
+                    .endpointOverride(URI.create(endpoint))
+                    .credentialsProvider(awsCredentialsProvider)
+                    .build()
+            )
+        }
+
+        val metricsConfig = configsBuilder.metricsConfig()
+            .metricsLevel(MetricsLevel.NONE)
+            .metricsPublishingEnabled(false)
+
+        val cloudWatchConfig = configsBuilder.cloudWatchConfig()
+            .publisherFlushMillis(60000)
+
+        return Scheduler(
+            configsBuilder.checkpointConfig(),
+            configsBuilder.coordinatorConfig(),
+            leaseManagementConfig,
+            lifecycleConfig = configsBuilder.lifecycleConfig(),
+            metricsConfig = metricsConfig,
+            processorConfig = processorConfig,
+            retrievalConfig = retrievalConfig,
+            cloudWatchConfig = cloudWatchConfig
+        )
     }
 
     override fun stop(): Void {
-        var workerStopped = false;
-        val workerShutdownFuture = worker.startGracefulShutdown();
-        workerStopped = try {
-            workerShutdownFuture.get(10, TimeUnit.SECONDS)
-        } catch (e: Exception) {
-            // TODO log
-            false
-        };
-
-        if (!workerStopped) {
-            worker.shutdown();
+        if (this::scheduler.isInitialized) {
+            try {
+                scheduler.shutdown()
+                
+                if (this::schedulerFuture.isInitialized) {
+                    schedulerFuture.cancel(true)
+                }
+                
+                if (this::thread.isInitialized) {
+                    thread.join(1000)
+                }
+            } catch (e: InterruptedException) {
+                Thread.currentThread().interrupt()
+            }
         }
-
-        try {
-            thread.join(1000);
-        } catch (e: InterruptedException) {
-            Thread.currentThread().interrupt();
-        }
-
-        return Unit as Void;
+        
+        return Unit as Void
     }
 }

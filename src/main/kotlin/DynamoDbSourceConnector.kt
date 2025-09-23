@@ -9,11 +9,11 @@ import org.apache.kafka.connect.source.SourceConnector
 import java.util.*
 
 class DynamoDbSourceConnector(private var tablesProvider: TablesProvider?) : SourceConnector() {
-    private lateinit var configProperties: Map<String, String>;
-    private lateinit var consumableTables: List<String>;
+    private lateinit var configProperties: Map<String, String>
+    private lateinit var consumableTables: List<String>
 
     @Volatile
-    private lateinit var timer: Timer;
+    private lateinit var timer: Timer
 
     lateinit var connectorConfig: DynamoDbSourceConnectorConfig;
 
@@ -22,29 +22,29 @@ class DynamoDbSourceConnector(private var tablesProvider: TablesProvider?) : Sou
     }
 
     override fun start(properties: Map<String, String>) {
-        configProperties = properties;
+        configProperties = properties
         connectorConfig = DynamoDbSourceConnectorConfig(
             ConfigDef(),
             configProperties
-        );
+        )
 
         val groupsTaggingApiClient = AwsClients.buildAwsResourceGroupsTaggingApiClient(
             connectorConfig.getAwsRegion(),
             connectorConfig.getResourceTaggingServiceEndpoint(),
             connectorConfig.getAwsAccessKeyIdValue(),
             connectorConfig.getAwsSecretKeyValue(),
-        );
+        )
 
         val dynamoDbClient = AwsClients.buildDynamoDbClient(
             connectorConfig.getAwsRegion(),
             connectorConfig.getResourceTaggingServiceEndpoint(),
             connectorConfig.getAwsAccessKeyIdValue(),
             connectorConfig.getAwsSecretKeyValue(),
-        );
+        )
 
         if (tablesProvider == null) {
             tablesProvider = if (connectorConfig.getWhitelistTables() != null) {
-                ConfigTablesProvider(dynamoDbClient, connectorConfig);
+                ConfigTablesProvider(dynamoDbClient, connectorConfig)
             } else {
                 DynamoDbTablesProvider(
                     groupsTaggingApiClient,
@@ -63,7 +63,7 @@ class DynamoDbSourceConnector(private var tablesProvider: TablesProvider?) : Sou
         connectorCtx: ConnectorContext,
         rediscoveryPeriod: Long,
     ) {
-        timer = Timer(true);
+        timer = Timer(true)
 
         val configurationChangeDetectorTask = object : TimerTask() {
             override fun run() {
@@ -71,44 +71,44 @@ class DynamoDbSourceConnector(private var tablesProvider: TablesProvider?) : Sou
                     tablesProvider?.getConsumableTables()
                 } catch (e: Throwable) { listOf() }
                 if (consumableTables != consumableTablesRefreshed) {
-                    connectorCtx.requestTaskReconfiguration();
+                    connectorCtx.requestTaskReconfiguration()
                 }
             }
-        };
+        }
 
-        timer.scheduleAtFixedRate(configurationChangeDetectorTask, rediscoveryPeriod, rediscoveryPeriod);
+        timer.scheduleAtFixedRate(configurationChangeDetectorTask, rediscoveryPeriod, rediscoveryPeriod)
     }
 
     override fun stop() {
-        timer.cancel();
+        timer.cancel()
     }
 
     override fun taskConfigs(maxTasks: Int): List<Map<String, String>> {
         consumableTables = try {
             tablesProvider?.getConsumableTables() ?: listOf()
         } catch (e: InterruptedException) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt()
             consumableTables
         }
 
         if (consumableTables.size > maxTasks) {
-            return listOf();
+            return listOf()
         }
 
-        val taskCfgs = ArrayList<Map<String, String>>(consumableTables.size);
+        val taskCfgs = ArrayList<Map<String, String>>(consumableTables.size)
         for (table in consumableTables) {
-            val taskProps = HashMap<String, String>(configProperties);
-            taskProps.put(DynamoDbSourceTaskConfig.TableNameConfig, table);
-            taskProps.put(DynamoDbSourceTaskConfig.TaskIdConfig, "task-1");
-            taskCfgs.add(taskProps);
+            val taskProps = HashMap<String, String>(configProperties)
+            taskProps.put(DynamoDbSourceTaskConfig.TableNameConfig, table)
+            taskProps.put(DynamoDbSourceTaskConfig.TaskIdConfig, "task-1")
+            taskCfgs.add(taskProps)
         }
 
-        return taskCfgs;
+        return taskCfgs
     }
 
-    override fun config() = connectorConfig.config;
+    override fun config() = connectorConfig.config
 
     override fun version(): String {
-        return "0.1";
+        return "0.1"
     }
 }

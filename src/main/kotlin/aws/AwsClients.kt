@@ -1,17 +1,15 @@
 package aws
 
-import com.amazonaws.ClientConfiguration
-import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
-import com.amazonaws.client.builder.AwsClientBuilder
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreamsClientBuilder
-import com.amazonaws.services.resourcegroupstaggingapi.AWSResourceGroupsTaggingAPI
-import com.amazonaws.services.resourcegroupstaggingapi.AWSResourceGroupsTaggingAPIClientBuilder
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.http.apache.ApacheHttpClient
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient
+import software.amazon.awssdk.services.resourcegroupstaggingapi.ResourceGroupsTaggingApiClient
+import java.net.URI
 
 object AwsClients {
     @JvmStatic
@@ -20,14 +18,17 @@ object AwsClients {
         serviceEndpoint: String?,
         awsAccessKeyId: String?,
         awsSecretKey: String?,
-    ): AmazonDynamoDB {
-        return configureBuilder(
-            AmazonDynamoDBClientBuilder.standard(),
-            awsRegion,
-            serviceEndpoint,
-            awsAccessKeyId,
-            awsSecretKey
-        ).build();
+    ): DynamoDbClient {
+        val builder = DynamoDbClient.builder()
+            .credentialsProvider(getCredentials(awsAccessKeyId, awsSecretKey))
+            .region(Region.of(awsRegion))
+            .httpClientBuilder(ApacheHttpClient.builder())
+        
+        if (!serviceEndpoint.isNullOrEmpty()) {
+            builder.endpointOverride(URI.create(serviceEndpoint))
+        }
+        
+        return builder.build()
     }
 
     @JvmStatic
@@ -36,14 +37,17 @@ object AwsClients {
         serviceEndpoint: String?,
         awsAccessKeyId: String?,
         awsSecretKey: String?,
-    ): AmazonDynamoDBStreams {
-        return configureBuilder(
-            AmazonDynamoDBStreamsClientBuilder.standard(),
-            awsRegion,
-            serviceEndpoint,
-            awsAccessKeyId,
-            awsSecretKey
-        ).build();
+    ): DynamoDbStreamsClient {
+        val builder = DynamoDbStreamsClient.builder()
+            .credentialsProvider(getCredentials(awsAccessKeyId, awsSecretKey))
+            .region(Region.of(awsRegion))
+            .httpClientBuilder(ApacheHttpClient.builder())
+        
+        if (!serviceEndpoint.isNullOrEmpty()) {
+            builder.endpointOverride(URI.create(serviceEndpoint))
+        }
+        
+        return builder.build()
     }
 
     @JvmStatic
@@ -52,43 +56,26 @@ object AwsClients {
         serviceEndpoint: String?,
         awsAccessKeyId: String?,
         awsSecretKey: String?,
-    ): AWSResourceGroupsTaggingAPI {
-        return configureBuilder(
-            AWSResourceGroupsTaggingAPIClientBuilder.standard(),
-            awsRegion,
-            serviceEndpoint,
-            awsAccessKeyId,
-            awsSecretKey
-        ).build();
-    }
-
-    @JvmStatic
-    fun getCredentials(awsAccessKey: String?, awsSecretKey: String?): AWSCredentialsProvider {
-        if (awsAccessKey.isNullOrBlank() || awsSecretKey.isNullOrBlank()) {
-            return DefaultAWSCredentialsProviderChain.getInstance();
-        }
-
-        val awsCreds = BasicAWSCredentials(awsAccessKey, awsSecretKey);
-        return AWSStaticCredentialsProvider(awsCreds);
-    }
-
-    @JvmStatic
-    private fun <SubClass : AwsClientBuilder<*, *>, TypeToBuild>configureBuilder(
-        builder: AwsClientBuilder<SubClass, TypeToBuild>,
-        awsRegion: String,
-        serviceEndpoint: String?,
-        awsAccessKeyId: String?,
-        awsSecretKey: String?,
-    ): AwsClientBuilder<SubClass, TypeToBuild> {
-        builder.withCredentials(getCredentials(awsAccessKeyId, awsSecretKey))
-            .withClientConfiguration(ClientConfiguration().withThrottledRetries(true));
-
+    ): ResourceGroupsTaggingApiClient {
+        val builder = ResourceGroupsTaggingApiClient.builder()
+            .credentialsProvider(getCredentials(awsAccessKeyId, awsSecretKey))
+            .region(Region.of(awsRegion))
+            .httpClientBuilder(ApacheHttpClient.builder())
+        
         if (!serviceEndpoint.isNullOrEmpty()) {
-            builder.withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(serviceEndpoint, awsRegion));
-        } else {
-            builder.withRegion(awsRegion);
+            builder.endpointOverride(URI.create(serviceEndpoint))
+        }
+        
+        return builder.build()
+    }
+
+    @JvmStatic
+    fun getCredentials(awsAccessKey: String?, awsSecretKey: String?): AwsCredentialsProvider {
+        if (awsAccessKey.isNullOrBlank() || awsSecretKey.isNullOrBlank()) {
+            return DefaultCredentialsProvider.create()
         }
 
-        return builder;
+        val awsCreds = AwsBasicCredentials.create(awsAccessKey, awsSecretKey)
+        return StaticCredentialsProvider.create(awsCreds)
     }
 }

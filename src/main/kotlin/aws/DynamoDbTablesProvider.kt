@@ -1,61 +1,66 @@
 package aws
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.resourcegroupstaggingapi.AWSResourceGroupsTaggingAPI
-import com.amazonaws.services.resourcegroupstaggingapi.model.GetResourcesRequest
-import com.amazonaws.services.resourcegroupstaggingapi.model.TagFilter
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.resourcegroupstaggingapi.ResourceGroupsTaggingApiClient
+import software.amazon.awssdk.services.resourcegroupstaggingapi.model.GetResourcesRequest
+import software.amazon.awssdk.services.resourcegroupstaggingapi.model.TagFilter
 import java.util.*
 
 class DynamoDbTablesProvider(
-    private val groupsTaggingApi: AWSResourceGroupsTaggingAPI,
-    private val client: AmazonDynamoDB,
+    private val groupsTaggingApi: ResourceGroupsTaggingApiClient,
+    private val client: DynamoDbClient,
     private val ingestionTagKey: String,
     private val envTagKey: String,
     private val envTagValue: String,
 ) : TablesProviderBase() {
     override fun getConsumableTables(): List<String> {
-        val consumableTables = LinkedList<String>();
-        val resourcesRequest = buildResourceRequest();
+        val consumableTables = LinkedList<String>()
+        var resourcesRequest = buildResourceRequest()
+        var paginationToken: String? = null
 
-        while (true) {
-            val result = groupsTaggingApi.getResources(resourcesRequest);
+        do {
+            // If there's a pagination token from previous request, use it
+            if (paginationToken != null) {
+                resourcesRequest = resourcesRequest.toBuilder()
+                    .paginationToken(paginationToken)
+                    .build()
+            }
 
-            for (resource in result.resourceTagMappingList) {
-                val tableArn = resource.resourceARN;
-                val tableName = tableArn.substring(tableArn.lastIndexOf('/') + 1);
+            val result = groupsTaggingApi.getResources(resourcesRequest)
+
+            for (resource in result.resourceTagMappingList()) {
+                val tableArn = resource.resourceARN()
+                val tableName = tableArn.substring(tableArn.lastIndexOf('/') + 1)
 
                 val tableDesc = try {
-                    client.describeTable(tableName).table
-                } catch (_: Throwable) { continue; };
+                    client.describeTable { it.tableName(tableName) }.table()
+                } catch (_: Throwable) { continue }
+                
                 if (hasValidConfig(tableDesc, tableName)) {
-                    consumableTables.add(tableName);
+                    consumableTables.add(tableName)
                 }
             }
 
-            if (result.paginationToken.isNullOrEmpty()) break;
+            paginationToken = result.paginationToken()
+        } while (paginationToken != null && paginationToken.isNotEmpty())
 
-            resourcesRequest.withPaginationToken(result.paginationToken);
-        }
-
-        return consumableTables;
+        return consumableTables
     }
 
     private fun buildResourceRequest(): GetResourcesRequest {
-        val stackTagFilter = TagFilter();
-        stackTagFilter.withKey(envTagKey);
-        stackTagFilter.setValues(Collections.singletonList(envTagValue));
+        val stackTagFilter = TagFilter.builder()
+            .key(envTagKey)
+            .values(envTagValue)
+            .build()
 
-        val ingestionTagFilter = TagFilter();
-        ingestionTagFilter.withKey(ingestionTagKey);
+        val ingestionTagFilter = TagFilter.builder()
+            .key(ingestionTagKey)
+            .build()
 
-        val tagFilters = LinkedList<TagFilter>();
-        tagFilters.add(stackTagFilter);
-        tagFilters.add(ingestionTagFilter);
-
-        return GetResourcesRequest()
-            .withResourceTypeFilters("dynamodb")
-            .withResourcesPerPage(50)
-            .withTagFilters(tagFilters);
+        return GetResourcesRequest.builder()
+            .resourceTypeFilters("dynamodb")
+            .resourcesPerPage(50)
+            .tagFilters(stackTagFilter, ingestionTagFilter)
+            .build()
     }
-
 }

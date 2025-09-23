@@ -2,11 +2,11 @@
 import aws.AwsClients
 import aws.DynamoDbTableScanner
 import aws.TableScanner
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.dynamodbv2.model.AttributeValue
-import com.amazonaws.services.dynamodbv2.model.ScanResult
-import com.amazonaws.services.dynamodbv2.model.TableDescription
-import com.amazonaws.services.dynamodbv2.streamsadapter.model.RecordAdapter
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse
+import software.amazon.awssdk.services.dynamodb.model.TableDescription
+import software.amazon.kinesis.retrieval.KinesisClientRecord
 import kcl.KclRecordsWrapper
 import kcl.KclWorker
 import kcl.KclWorkerImpl
@@ -28,22 +28,22 @@ import kotlin.time.ExperimentalTime
 
 class DynamoDbSourceTask(
     private var clock: Clock?,
-    private var client: AmazonDynamoDB?,
+    private var client: DynamoDbClient?,
     private var tableScanner: TableScanner?,
     private var kclWorker: KclWorker?,
 ) : SourceTask() {
-    private var shutdown: Boolean = false;
-    private val shardRegister = ConcurrentHashMap<String, ShardInfo>();
+    private var shutdown: Boolean = false
+    private val shardRegister = ConcurrentHashMap<String, ShardInfo>()
     private val eventsQueue = ArrayBlockingQueue<KclRecordsWrapper>(10, true)
 
-    private lateinit var sourceInfo: SourceInfo;
-    private lateinit var tableDesc: TableDescription;
-    private lateinit var recordConverter: RecordConverter;
-    private var initSyncDelay: Int = -1;
+    private lateinit var sourceInfo: SourceInfo
+    private lateinit var tableDesc: TableDescription
+    private lateinit var recordConverter: RecordConverter
+    private var initSyncDelay: Int = -1
 
     init {
         if (clock == null) {
-            clock = Clock.systemUTC();
+            clock = Clock.systemUTC()
         }
     }
 
@@ -51,7 +51,7 @@ class DynamoDbSourceTask(
     public fun DynamoDBSourceTask() {}
 
     override fun version(): String {
-        return "0.1";
+        return "0.1"
     }
 
     override fun start(configProperties: Map<String, String>) {
@@ -69,44 +69,51 @@ class DynamoDbSourceTask(
         startWithClient(config, client!!);
     }
 
-    private fun startWithClient(config: DynamoDbSourceTaskConfig, client: AmazonDynamoDB) {
-        tableDesc = client.describeTable(config.getTableName()).table;
-        initSyncDelay = config.getInitSyncDelay();
+    private fun startWithClient(config: DynamoDbSourceTaskConfig, client: DynamoDbClient) {
+        tableDesc = client.describeTable { it.tableName(config.getTableName()) }.table()
+        initSyncDelay = config.getInitSyncDelay()
 
         if (tableScanner == null) {
-            tableScanner =  DynamoDbTableScanner(client, tableDesc.tableName, tableDesc.provisionedThroughput.readCapacityUnits);
+            val readCapacity = if (tableDesc.provisionedThroughput() != null) {
+                tableDesc.provisionedThroughput().readCapacityUnits()
+            } else {
+                0 // Default for on-demand capacity
+            }
+            tableScanner = DynamoDbTableScanner(client, tableDesc.tableName(), readCapacity)
         }
 
-        recordConverter = RecordConverter(tableDesc, config.getDestinationTopicPrefix());
+        recordConverter = RecordConverter(tableDesc, config.getDestinationTopicPrefix())
 
         val dynamoDbStreamsClient = AwsClients.buildDynamoDbStreamsClient(
             config.getAwsRegion(),
             config.getDynamoDBServiceEndpoint(),
             config.getAwsAccessKeyIdValue(),
             config.getAwsSecretKeyValue(),
-        );
+        )
 
         if (kclWorker == null) {
             kclWorker = KclWorkerImpl(
                 AwsClients.getCredentials(config.getAwsAccessKeyIdValue(), config.getAwsSecretKeyValue()),
                 eventsQueue,
                 shardRegister
-            );
+            )
         }
-        kclWorker!!.start(client, dynamoDbStreamsClient, tableDesc.tableName, config.getTaskId(), config.getDynamoDBServiceEndpoint(), config.getKCLTableBillingMode());
+        kclWorker!!.start(client, dynamoDbStreamsClient, tableDesc.tableName(), config.getTaskId(), config.getDynamoDBServiceEndpoint(), config.getKCLTableBillingMode())
 
-        shutdown = false;
+        shutdown = false
+
+        setStateFromOffset()
     }
 
     private fun setStateFromOffset() {
         val offset = context.offsetStorageReader()
-            .offset(Collections.singletonMap("table_name", tableDesc.tableName));
+            .offset(Collections.singletonMap("table_name", tableDesc.tableName()))
 
         if (offset != null) {
-            sourceInfo = SourceInfo.fromOffset(offset, clock!!);
+            sourceInfo = SourceInfo.fromOffset(offset, clock!!)
         } else {
-            sourceInfo = SourceInfo(tableDesc.tableName, clock!!);
-            sourceInfo.startInitSync();
+            sourceInfo = SourceInfo(tableDesc.tableName(), clock!!)
+            sourceInfo.startInitSync()
         }
     }
 
