@@ -1,0 +1,172 @@
+name: ATX Transform
+
+on:
+  workflow_dispatch:
+    inputs:
+      transform_name:
+        description: "Transform name to run"
+        required: true
+        type: string
+      build_command:
+        description: "Build command for the project"
+        required: false
+        type: string
+        default: "./gradlew build"
+      config_yaml:
+        description: "Additional ATX config (YAML string)"
+        required: false
+        type: string
+      java_source_version:
+        description: "Source Java version (leave empty to skip Java setup)"
+        required: false
+        type: string
+        default: "8"
+      java_target_version:
+        description: "Target Java version (leave empty to skip)"
+        required: false
+        type: string
+        default: "17"
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  atx-transform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine transform assignment
+        id: assignment
+        run: |
+          REPO="${{ github.repository }}"
+          ORG="${{ github.repository_owner }}"
+
+          if [ -n "${{ inputs.transform_name }}" ]; then
+            echo "transform_name=${{ inputs.transform_name }}" >> "$GITHUB_OUTPUT"
+            echo "build_command=${{ inputs.build_command }}" >> "$GITHUB_OUTPUT"
+            echo "transform_id=manual" >> "$GITHUB_OUTPUT"
+            echo "mode=direct" >> "$GITHUB_OUTPUT"
+            echo "org=${ORG}" >> "$GITHUB_OUTPUT"
+            echo "repo=${REPO}" >> "$GITHUB_OUTPUT"
+            echo "::notice::Using directly provided transform: ${{ inputs.transform_name }}"
+            exit 0
+          fi
+
+          echo "::error::No transform_name input provided"
+          exit 1
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.ATXCI_AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          role-duration-seconds: 14400
+
+      - name: Set up source Java
+        if: inputs.java_source_version != ''
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java_source_version }}
+          distribution: "temurin"
+
+      - name: Set up target Java
+        if: inputs.java_target_version != ''
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java_target_version }}
+          distribution: "temurin"
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Set up Node.js for ATX CLI
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install ATX CLI
+        run: |
+          curl -fsSL https://transform-cli.awsstatic.com/install.sh | bash
+          atx --version
+
+      - name: Run ATX transform
+        id: transform
+        run: |
+          TRANSFORM_NAME="${{ steps.assignment.outputs.transform_name }}"
+          BUILD_CMD="${{ steps.assignment.outputs.build_command }}"
+          CONFIG_YAML="${{ inputs.config_yaml }}"
+
+          BEFORE_SHA=$(git rev-parse HEAD)
+
+          echo "::group::Running ATX transform: ${TRANSFORM_NAME}"
+          set +e
+          ATX_CMD="atx custom def exec -n \"${TRANSFORM_NAME}\" -p . -c \"${BUILD_CMD}\" -x -t -d"
+          if [ -n "${CONFIG_YAML}" ]; then
+            ATX_CMD="${ATX_CMD} -g \"${CONFIG_YAML}\""
+          fi
+          eval ${ATX_CMD}
+          EXIT_CODE=$?
+          set -e
+          echo "::endgroup::"
+
+          echo "exit_code=${EXIT_CODE}" >> "$GITHUB_OUTPUT"
+
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "::error::ATX transform failed with exit code ${EXIT_CODE}"
+          fi
+
+          AFTER_SHA=$(git rev-parse HEAD)
+          HAS_UNCOMMITTED=$(git status --porcelain)
+          if [ "$BEFORE_SHA" != "$AFTER_SHA" ] || [ -n "$HAS_UNCOMMITTED" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Transform produced changes"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Transform completed but produced no changes"
+          fi
+
+      - name: Generate GitHub App Token
+        if: steps.transform.outputs.has_changes == 'true'
+        uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.ATXCI_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ATXCI_APP_PRIVATE_KEY }}
+
+      - name: Create Pull Request
+        if: steps.transform.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          BRANCH_NAME="atx-transform/${{ steps.assignment.outputs.transform_name }}"
+          DEFAULT_BRANCH="${{ github.ref_name }}"
+
+          git config --unset-all http.https://github.com/.extraheader || true
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git push origin "HEAD:refs/heads/${BRANCH_NAME}" --force
+
+          gh pr create \
+            --base "${DEFAULT_BRANCH}" \
+            --head "${BRANCH_NAME}" \
+            --title "ATX Transform: ${{ steps.assignment.outputs.transform_name }}" \
+            --body "## ATX Transform Applied
+
+          **Transform**: \`${{ steps.assignment.outputs.transform_name }}\`
+          **Build command**: \`${{ steps.assignment.outputs.build_command }}\`
+          **Run ID**: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          **Exit code**: \`${{ steps.transform.outputs.exit_code }}\`
+
+          ---
+          _This PR was automatically created by [atxci](https://github.com/atxci)._
+          Please review the changes carefully before merging."
