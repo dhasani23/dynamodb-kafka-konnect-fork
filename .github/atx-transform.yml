@@ -4,28 +4,28 @@ on:
   workflow_dispatch:
     inputs:
       transform_name:
-        description: "Transform name to run"
+        description: Transform name to run
         required: true
         type: string
       build_command:
-        description: "Build command for the project"
+        description: Build command for the project
         required: false
         type: string
-        default: "./gradlew build"
+        default: ./gradlew build
       config_yaml:
-        description: "Additional ATX config (YAML string)"
+        description: Additional ATX config (YAML string)
         required: false
         type: string
       java_source_version:
-        description: "Source Java version (leave empty to skip Java setup)"
+        description: Source Java version
         required: false
         type: string
-        default: "8"
+        default: '8'
       java_target_version:
-        description: "Target Java version (leave empty to skip)"
+        description: Target Java version
         required: false
         type: string
-        default: "17"
+        default: '17'
 
 permissions:
   id-token: write
@@ -44,7 +44,6 @@ jobs:
         run: |
           REPO="${{ github.repository }}"
           ORG="${{ github.repository_owner }}"
-
           if [ -n "${{ inputs.transform_name }}" ]; then
             echo "transform_name=${{ inputs.transform_name }}" >> "$GITHUB_OUTPUT"
             echo "build_command=${{ inputs.build_command }}" >> "$GITHUB_OUTPUT"
@@ -55,7 +54,6 @@ jobs:
             echo "::notice::Using directly provided transform: ${{ inputs.transform_name }}"
             exit 0
           fi
-
           echo "::error::No transform_name input provided"
           exit 1
 
@@ -71,29 +69,22 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ inputs.java_source_version }}
-          distribution: "temurin"
+          distribution: temurin
 
       - name: Set up target Java
         if: inputs.java_target_version != ''
         uses: actions/setup-java@v4
         with:
           java-version: ${{ inputs.java_target_version }}
-          distribution: "temurin"
+          distribution: temurin
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Set up Node.js for ATX CLI
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Install ATX CLI
         run: |
@@ -106,9 +97,7 @@ jobs:
           TRANSFORM_NAME="${{ steps.assignment.outputs.transform_name }}"
           BUILD_CMD="${{ steps.assignment.outputs.build_command }}"
           CONFIG_YAML="${{ inputs.config_yaml }}"
-
           BEFORE_SHA=$(git rev-parse HEAD)
-
           echo "::group::Running ATX transform: ${TRANSFORM_NAME}"
           set +e
           ATX_CMD="atx custom def exec -n \"${TRANSFORM_NAME}\" -p . -c \"${BUILD_CMD}\" -x -t -d"
@@ -119,13 +108,10 @@ jobs:
           EXIT_CODE=$?
           set -e
           echo "::endgroup::"
-
           echo "exit_code=${EXIT_CODE}" >> "$GITHUB_OUTPUT"
-
           if [ $EXIT_CODE -ne 0 ]; then
             echo "::error::ATX transform failed with exit code ${EXIT_CODE}"
           fi
-
           AFTER_SHA=$(git rev-parse HEAD)
           HAS_UNCOMMITTED=$(git status --porcelain)
           if [ "$BEFORE_SHA" != "$AFTER_SHA" ] || [ -n "$HAS_UNCOMMITTED" ]; then
@@ -151,11 +137,9 @@ jobs:
         run: |
           BRANCH_NAME="atx-transform/${{ steps.assignment.outputs.transform_name }}"
           DEFAULT_BRANCH="${{ github.ref_name }}"
-
           git config --unset-all http.https://github.com/.extraheader || true
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git push origin "HEAD:refs/heads/${BRANCH_NAME}" --force
-
           gh pr create \
             --base "${DEFAULT_BRANCH}" \
             --head "${BRANCH_NAME}" \
