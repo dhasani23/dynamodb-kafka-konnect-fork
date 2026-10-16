@@ -41,17 +41,20 @@ jobs:
 
       - name: Determine transform assignment
         id: assignment
+        env:
+          REPO: ${{ github.repository }}
+          ORG: ${{ github.repository_owner }}
+          TRANSFORM_NAME: ${{ inputs.transform_name }}
+          BUILD_COMMAND: ${{ inputs.build_command }}
         run: |
-          REPO="${{ github.repository }}"
-          ORG="${{ github.repository_owner }}"
-          if [ -n "${{ inputs.transform_name }}" ]; then
-            echo "transform_name=${{ inputs.transform_name }}" >> "$GITHUB_OUTPUT"
-            echo "build_command=${{ inputs.build_command }}" >> "$GITHUB_OUTPUT"
+          if [ -n "$TRANSFORM_NAME" ]; then
+            echo "transform_name=$TRANSFORM_NAME" >> "$GITHUB_OUTPUT"
+            echo "build_command=$BUILD_COMMAND" >> "$GITHUB_OUTPUT"
             echo "transform_id=manual" >> "$GITHUB_OUTPUT"
             echo "mode=direct" >> "$GITHUB_OUTPUT"
-            echo "org=${ORG}" >> "$GITHUB_OUTPUT"
-            echo "repo=${REPO}" >> "$GITHUB_OUTPUT"
-            echo "::notice::Using directly provided transform: ${{ inputs.transform_name }}"
+            echo "org=$ORG" >> "$GITHUB_OUTPUT"
+            echo "repo=$REPO" >> "$GITHUB_OUTPUT"
+            echo "::notice::Using directly provided transform: $TRANSFORM_NAME"
             exit 0
           fi
           echo "::error::No transform_name input provided"
@@ -87,24 +90,42 @@ jobs:
           node-version: '20'
 
       - name: Install ATX CLI
+        env:
+          ATX_CLI_INSTALLER_URL: https://transform-cli.awsstatic.com/install.sh
+          ATX_CLI_INSTALLER_SHA256: ${{ vars.ATX_CLI_INSTALLER_SHA256 }}
         run: |
-          curl -fsSL https://transform-cli.awsstatic.com/install.sh | bash
+          set -euo pipefail
+          if [ -z "${ATX_CLI_INSTALLER_SHA256}" ]; then
+            echo "::error::Repository variable ATX_CLI_INSTALLER_SHA256 is not set; refusing to run an unverified installer"
+            exit 1
+          fi
+          curl -fsSL --proto '=https' --tlsv1.2 -o install.sh "$ATX_CLI_INSTALLER_URL"
+          echo "${ATX_CLI_INSTALLER_SHA256}  install.sh" > install.sh.sha256
+          if ! sha256sum -c install.sh.sha256; then
+            echo "::error::ATX CLI installer checksum verification failed"
+            rm -f install.sh install.sh.sha256
+            exit 1
+          fi
+          bash ./install.sh
+          rm -f install.sh install.sh.sha256
           atx --version
 
       - name: Run ATX transform
         id: transform
+        shell: bash
+        env:
+          TRANSFORM_NAME: ${{ steps.assignment.outputs.transform_name }}
+          BUILD_CMD: ${{ steps.assignment.outputs.build_command }}
+          CONFIG_YAML: ${{ inputs.config_yaml }}
         run: |
-          TRANSFORM_NAME="${{ steps.assignment.outputs.transform_name }}"
-          BUILD_CMD="${{ steps.assignment.outputs.build_command }}"
-          CONFIG_YAML="${{ inputs.config_yaml }}"
           BEFORE_SHA=$(git rev-parse HEAD)
           echo "::group::Running ATX transform: ${TRANSFORM_NAME}"
-          set +e
-          ATX_CMD="atx custom def exec -n \"${TRANSFORM_NAME}\" -p . -c \"${BUILD_CMD}\" -x -t -d"
-          if [ -n "${CONFIG_YAML}" ]; then
-            ATX_CMD="${ATX_CMD} -g \"${CONFIG_YAML}\""
+          atx_cmd=(atx custom def exec -n "$TRANSFORM_NAME" -p . -c "$BUILD_CMD" -x -t -d)
+          if [ -n "$CONFIG_YAML" ]; then
+            atx_cmd+=(-g "$CONFIG_YAML")
           fi
-          eval ${ATX_CMD}
+          set +e
+          "${atx_cmd[@]}"
           EXIT_CODE=$?
           set -e
           echo "::endgroup::"
@@ -134,23 +155,31 @@ jobs:
         if: steps.transform.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TRANSFORM_NAME: ${{ steps.assignment.outputs.transform_name }}
+          BUILD_COMMAND: ${{ steps.assignment.outputs.build_command }}
+          DEFAULT_BRANCH: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          SERVER_URL: ${{ github.server_url }}
+          TRANSFORM_EXIT_CODE: ${{ steps.transform.outputs.exit_code }}
         run: |
-          BRANCH_NAME="atx-transform/${{ steps.assignment.outputs.transform_name }}"
-          DEFAULT_BRANCH="${{ github.ref_name }}"
+          BRANCH_NAME="atx-transform/${TRANSFORM_NAME}"
           git config --unset-all http.https://github.com/.extraheader || true
-          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
           git push origin "HEAD:refs/heads/${BRANCH_NAME}" --force
+          PR_BODY=$(printf '%s\n' \
+            "## ATX Transform Applied" \
+            "" \
+            "**Transform**: \`${TRANSFORM_NAME}\`" \
+            "**Build command**: \`${BUILD_COMMAND}\`" \
+            "**Run ID**: [${RUN_ID}](${SERVER_URL}/${REPO}/actions/runs/${RUN_ID})" \
+            "**Exit code**: \`${TRANSFORM_EXIT_CODE}\`" \
+            "" \
+            "---" \
+            "_This PR was automatically created by [atxci](https://github.com/atxci)._" \
+            "Please review the changes carefully before merging.")
           gh pr create \
             --base "${DEFAULT_BRANCH}" \
             --head "${BRANCH_NAME}" \
-            --title "ATX Transform: ${{ steps.assignment.outputs.transform_name }}" \
-            --body "## ATX Transform Applied
-
-          **Transform**: \`${{ steps.assignment.outputs.transform_name }}\`
-          **Build command**: \`${{ steps.assignment.outputs.build_command }}\`
-          **Run ID**: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          **Exit code**: \`${{ steps.transform.outputs.exit_code }}\`
-
-          ---
-          _This PR was automatically created by [atxci](https://github.com/atxci)._
-          Please review the changes carefully before merging."
+            --title "ATX Transform: ${TRANSFORM_NAME}" \
+            --body "${PR_BODY}"
