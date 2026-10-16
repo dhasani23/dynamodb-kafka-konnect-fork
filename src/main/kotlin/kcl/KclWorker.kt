@@ -12,7 +12,7 @@ interface KclWorker {
         taskId: String,
         endpoint: String,
         kclTableBillingMode: BillingMode
-    ): Void;
+    );
 
-    fun stop(): Void;
+    fun stop();
 }
