@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="4.3">
+<file name="src/main/kotlin/DynamoDbSourceTask.kt">
+	<error line="129" column="9" severity="warning" message="Exception is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="229" column="22" severity="warning" message="The caught exception is swallowed. The original exception could be lost." source="detekt.SwallowedException" />
+	<error line="69" column="33" severity="warning" message="Calling !! on a nullable type will throw a NullPointerException at runtime in case the value is null. It should be avoided." source="detekt.UnsafeCallOnNullableType" />
+	<error line="96" column="9" severity="warning" message="Calling !! on a nullable type will throw a NullPointerException at runtime in case the value is null. It should be avoided." source="detekt.UnsafeCallOnNullableType" />
+	<error line="106" column="56" severity="warning" message="Calling !! on a nullable type will throw a NullPointerException at runtime in case the value is null. It should be avoided." source="detekt.UnsafeCallOnNullableType" />
+	<error line="108" column="58" severity="warning" message="Calling !! on a nullable type will throw a NullPointerException at runtime in case the value is null. It should be avoided." source="detekt.UnsafeCallOnNullableType" />
+	<error line="134" column="57" severity="warning" message="Calling !! on a nullable type will throw a NullPointerException at runtime in case the value is null. It should be avoided." source="detekt.UnsafeCallOnNullableType" />
+	<error line="174" column="17" severity="warning" message="Calling !! on a nullable type will throw a NullPointerException at runtime in case the value is null. It should be avoided." source="detekt.UnsafeCallOnNullableType" />
+	<error line="277" column="58" severity="warning" message="Calling !! on a nullable type will throw a NullPointerException at runtime in case the value is null. It should be avoided." source="detekt.UnsafeCallOnNullableType" />
+	<error line="101" column="17" severity="warning" message="Private function `setStateFromOffset` is unused." source="detekt.UnusedPrivateMember" />
+</file>
+<file name="src/main/kotlin/DynamoDbSourceConnector.kt">
+	<error line="72" column="26" severity="warning" message="The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled." source="detekt.TooGenericExceptionCaught" />
+	<error line="72" column="26" severity="warning" message="The caught exception is swallowed. The original exception could be lost." source="detekt.SwallowedException" />
+	<error line="62" column="17" severity="warning" message="Private function `startBackgroundReconfigurationTasks` is unused." source="detekt.UnusedPrivateMember" />
+</file>
+<file name="src/main/kotlin/utilities/RecordConverter.kt">
+	<error line="83" column="13" severity="warning" message="Exception is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+</file>
+<file name="src/main/kotlin/kcl/KclWorkerImpl.kt">
+	<error line="111" column="18" severity="warning" message="The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled." source="detekt.TooGenericExceptionCaught" />
+	<error line="111" column="18" severity="warning" message="The caught exception is swallowed. The original exception could be lost." source="detekt.SwallowedException" />
+	<error line="67" column="16" severity="warning" message="Unit cast to Void cannot succeed." source="detekt.UnsafeCast" />
+	<error line="126" column="16" severity="warning" message="Unit cast to Void cannot succeed." source="detekt.UnsafeCast" />
+</file>
+<file name="src/main/kotlin/kcl/KclRecordProcessor.kt">
+	<error line="133" column="18" severity="warning" message="The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled." source="detekt.TooGenericExceptionCaught" />
+	<error line="68" column="17" severity="warning" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="70" column="17" severity="warning" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="72" column="17" severity="warning" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="92" column="13" severity="warning" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="94" column="13" severity="warning" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="96" column="13" severity="warning" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="133" column="18" severity="warning" message="The caught exception is swallowed. The original exception could be lost." source="detekt.SwallowedException" />
+</file>
+</checkstyle>

