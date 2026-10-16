@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.kafka.connect.data.Schema
 import org.apache.kafka.connect.data.SchemaBuilder
 import org.apache.kafka.connect.data.Struct
+import org.apache.kafka.connect.errors.DataException
 import org.apache.kafka.connect.source.SourceRecord
 import java.time.Instant
 import java.util.*
@@ -80,7 +81,10 @@ class RecordConverter(
                 keyData.put(key, attributeValue.n);
                 continue;
             }
-            throw Exception("Unsupported key AttributeValue");
+            throw DataException(
+                "Unsupported key AttributeValue for attribute '${key}': " +
+                    "expected a String (S) or Number (N) type, but got ${describeAttributeType(attributeValue)}"
+            );
         }
 
         val valueData = Struct(valueSchema)
@@ -109,6 +113,21 @@ class RecordConverter(
         }
 
         return keySchemaBuilder.build();
+    }
+
+    private fun describeAttributeType(attributeValue: AttributeValue?): String {
+        return when {
+            attributeValue == null -> "no value";
+            attributeValue.isNULL != null -> "NULL (NUL)";
+            attributeValue.bool != null -> "Boolean (BOOL)";
+            attributeValue.b != null -> "Binary (B)";
+            attributeValue.ss != null -> "String Set (SS)";
+            attributeValue.ns != null -> "Number Set (NS)";
+            attributeValue.bs != null -> "Binary Set (BS)";
+            attributeValue.l != null -> "List (L)";
+            attributeValue.m != null -> "Map (M)";
+            else -> "an unknown type";
+        };
     }
 
     private fun sanitizeAttributeName(element: KeySchemaElement): String {
