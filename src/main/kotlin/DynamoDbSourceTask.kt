@@ -11,8 +11,10 @@ import kcl.KclRecordsWrapper
 import kcl.KclWorker
 import kcl.KclWorkerImpl
 import kcl.ShardInfo
+import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.source.SourceRecord
 import org.apache.kafka.connect.source.SourceTask
+import org.slf4j.LoggerFactory
 import utilities.RecordConverter
 import java.math.BigInteger
 import java.time.Clock
@@ -32,6 +34,7 @@ class DynamoDbSourceTask(
     private var tableScanner: TableScanner?,
     private var kclWorker: KclWorker?,
 ) : SourceTask() {
+    private val log = LoggerFactory.getLogger(DynamoDbSourceTask::class.java);
     private var shutdown: Boolean = false;
     private val shardRegister = ConcurrentHashMap<String, ShardInfo>();
     private val eventsQueue = ArrayBlockingQueue<KclRecordsWrapper>(10, true)
@@ -227,7 +230,20 @@ class DynamoDbSourceTask(
                     result.add(tombstoneRecord);
                 }
             } catch (ex: java.lang.Exception) {
-                RegisterAsProcessed(dynamoDBRecords.getShardId(), record.sequenceNumber);
+                log.error(
+                    "Failed to convert DynamoDB stream record to a Kafka Connect record. " +
+                        "table={}, shardId={}, sequenceNumber={}",
+                    tableDesc.tableName,
+                    dynamoDBRecords.getShardId(),
+                    record.sequenceNumber,
+                    ex
+                );
+                throw ConnectException(
+                    "Failed to convert DynamoDB stream record for table " +
+                        "${tableDesc.tableName}, shard ${dynamoDBRecords.getShardId()}, " +
+                        "sequence number ${record.sequenceNumber}",
+                    ex
+                );
             }
         }
 
