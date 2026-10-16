@@ -10,7 +10,7 @@ import java.util.*
 
 class DynamoDbSourceConnector(private var tablesProvider: TablesProvider?) : SourceConnector() {
     private lateinit var configProperties: Map<String, String>;
-    private lateinit var consumableTables: List<String>;
+    private var consumableTables: List<String> = listOf();
 
     @Volatile
     private lateinit var timer: Timer;
@@ -56,7 +56,7 @@ class DynamoDbSourceConnector(private var tablesProvider: TablesProvider?) : Sou
             }
         }
 
-
+        startBackgroundReconfigurationTasks(context, connectorConfig.getRediscoveryPeriod());
     }
 
     private fun startBackgroundReconfigurationTasks(
