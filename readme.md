@@ -23,3 +23,10 @@ KAFKA_OPTS="-Dorg.apache.kafka.sasl.oauthbearer.allowed.urls=https://idp.example
 
 Without this property the worker rejects `sasl.oauthbearer.token.endpoint.url` and
 `sasl.oauthbearer.jwks.endpoint.url` values in submitted connector configs.
+
+## CI configuration
+
+The `.github/atx-transform.yml` workflow verifies the ATX CLI installer before running it. Set the
+repository variable `ATX_CLI_INSTALLER_SHA256` to the pinned SHA-256 of
+`https://transform-cli.awsstatic.com/install.sh`. The install step fails when the variable is unset
+or the downloaded installer does not match the checksum.
