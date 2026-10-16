@@ -31,7 +31,7 @@ class KclWorkerImpl(
         taskId: String,
         endpoint: String,
         kclTableBillingMode: BillingMode,
-        ): Void {
+        ) {
         val recordProcessorFactory = KclRecordProcessorFactory(
             tableName,
             eventsQueue,
@@ -63,8 +63,6 @@ class KclWorkerImpl(
         thread = Thread(worker);
         thread.isDaemon = true;
         thread.start();
-
-        return Unit as Void;
     }
 
     fun getClientLibConfig(
@@ -103,7 +101,7 @@ class KclWorkerImpl(
         return worker;
     }
 
-    override fun stop(): Void {
+    override fun stop() {
         var workerStopped = false;
         val workerShutdownFuture = worker.startGracefulShutdown();
         workerStopped = try {
@@ -122,7 +120,5 @@ class KclWorkerImpl(
         } catch (e: InterruptedException) {
             Thread.currentThread().interrupt();
         }
-
-        return Unit as Void;
     }
 }
